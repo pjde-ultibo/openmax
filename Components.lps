@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <ProjectSession>
+    <PathDelim Value="\"/>
+    <Version Value="9"/>
+    <BuildModes Active="Default"/>
+    <Units Count="18">
+      <Unit0>
+        <Filename Value="Components.lpr"/>
+        <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="155"/>
+        <CursorPos X="8" Y="158"/>
+        <UsageCount Value="219"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit0>
+      <Unit1>
+        <Filename Value="uaudioold.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="13"/>
+        <CursorPos X="79" Y="31"/>
+        <UsageCount Value="219"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="uAudio2.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="3" Y="17"/>
+        <UsageCount Value="195"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="uIL_client.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="uIL_Client"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="67"/>
+        <CursorPos X="28" Y="73"/>
+        <UsageCount Value="194"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="uOMX.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="1392"/>
+        <CursorPos X="20" Y="290"/>
+        <UsageCount Value="185"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="bitsandpieces.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="21"/>
+        <CursorPos X="20" Y="47"/>
+        <UsageCount Value="67"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="uAudio.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="95"/>
+        <CursorPos X="56" Y="102"/>
+        <UsageCount Value="52"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="..\CEC\CECTest.lpr"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="361"/>
+        <CursorPos Y="376"/>
+        <UsageCount Value="61"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="..\CEC\VC4CEC.pas"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="307"/>
+        <CursorPos X="43" Y="9"/>
+        <UsageCount Value="94"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="..\..\Core\fpc\3.1.1\source\rtl\ultibo\core\vc4.pas"/>
+        <UnitName Value="VC4"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="172"/>
+        <CursorPos X="42" Y="176"/>
+        <UsageCount Value="94"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="..\..\Core\examples\VideoCoreIV\HelloPi\HelloAudio\RPi2\HelloAudio.lpr"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="25"/>
+        <CursorPos X="24" Y="43"/>
+        <UsageCount Value="94"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="..\BLE\BLE_USBTest.lpr"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="90"/>
+        <CursorPos Y="111"/>
+        <UsageCount Value="61"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="audio.c"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="94"/>
+        <CursorPos X="51" Y="102"/>
+        <UsageCount Value="10"/>
+        <DefaultSyntaxHighlighter Value="C++"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="..\..\Core\fpc\3.1.1\source\rtl\inc\threadh.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="91"/>
+        <CursorPos X="26" Y="174"/>
+        <UsageCount Value="72"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="..\..\Core\fpc\3.1.1\source\rtl\ultibo\core\threads.pas"/>
+        <UnitName Value="Threads"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1717"/>
+        <CursorPos X="40" Y="1730"/>
+        <UsageCount Value="72"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="..\..\Core\fpc\3.1.1\source\rtl\ultibo\core\syscalls.pas"/>
+        <UnitName Value="Syscalls"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="2197"/>
+        <CursorPos X="31" Y="2214"/>
+        <UsageCount Value="40"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="..\..\Core\fpc\3.1.1\source\rtl\ultibo\core\globaltypes.pas"/>
+        <UnitName Value="GlobalTypes"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="44"/>
+        <CursorPos X="45" Y="55"/>
+        <UsageCount Value="8"/>
+      </Unit16>
+      <Unit17>
+        <Filename Value="Working.lpr"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="163"/>
+        <CursorPos X="50" Y="220"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit17>
+    </Units>
+    <JumpHistory Count="11" HistoryIndex="10">
+      <Position1>
+        <Filename Value="uIL_client.pas"/>
+        <Caret Line="73" Column="28" TopLine="67"/>
+      </Position1>
+      <Position2>
+        <Filename Value="Working.lpr"/>
+      </Position2>
+      <Position3>
+        <Filename Value="Components.lpr"/>
+        <Caret Line="140" Column="95" TopLine="169"/>
+      </Position3>
+      <Position4>
+        <Filename Value="Components.lpr"/>
+        <Caret Line="138" Column="62" TopLine="129"/>
+      </Position4>
+      <Position5>
+        <Filename Value="Components.lpr"/>
+        <Caret Line="215" TopLine="200"/>
+      </Position5>
+      <Position6>
+        <Filename Value="Components.lpr"/>
+        <Caret Line="109" Column="27" TopLine="94"/>
+      </Position6>
+      <Position7>
+        <Filename Value="Components.lpr"/>
+        <Caret Line="34" TopLine="23"/>
+      </Position7>
+      <Position8>
+        <Filename Value="Components.lpr"/>
+        <Caret Line="78" TopLine="70"/>
+      </Position8>
+      <Position9>
+        <Filename Value="Components.lpr"/>
+        <Caret Line="132" Column="24" TopLine="115"/>
+      </Position9>
+      <Position10>
+        <Filename Value="Components.lpr"/>
+        <Caret Line="78" TopLine="67"/>
+      </Position10>
+      <Position11>
+        <Filename Value="Components.lpr"/>
+        <Caret Line="27" TopLine="17"/>
+      </Position11>
+    </JumpHistory>
+  </ProjectSession>
+</CONFIG>
