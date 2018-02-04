@@ -115,6 +115,9 @@ type
    COMPONENT_T = _COMPONENT_T;
    PCOMPONENT_T = ^COMPONENT_T;
    PPCOMPONENT_T = ^PCOMPONENT_T;
+   APCOMPONENT_T = array of PCOMPONENT_T;
+   PAPCOMPONENT_T = ^APCOMPONENT_T;
+
 
 (**
  * The generic callback function is used for communicating events from
@@ -281,16 +284,16 @@ type
     source : PCOMPONENT_T;         (* The source component *)
     source_port : integer;         (* The output port index on the source component *)
     sink : PCOMPONENT_T;           (* The sink component *)
-    sink_port : PCOMPONENT_T;      (* The input port index on the sink component *)
+    sink_port : integer;           (* The input port index on the sink component *)
     end;
   PTUNNEL_T = ^TUNNEL_T;
-
 
 (**
  * The <DFN>set_tunnel</DFN> macro is a useful function that initialises a
  * <DFN>TUNNEL_T</DFN> structure.
  ***********************************************************)
-//#define set_tunnel(t,a,b,c,d)  do {TUNNEL_T *_ilct = (t); \
+procedure set_tunnel (t : PTUNNEL_T;  a : PCOMPONENT_T;  b : integer; c : PCOMPONENT_T; d : integer);
+ //#define set_tunnel(t,a,b,c,d)  do {TUNNEL_T *_ilct = (t); \
 //  _ilct->source = (a); _ilct->source_port = (b); \
 //  _ilct->sink = (c); _ilct->sink_port = (d);} while(0)
 
@@ -501,7 +504,7 @@ function ilclient_create_component (handle : PILCLIENT_T;
  *
  * @return void
  ***********************************************************)
-procedure ilclient_cleanup_components (list : PCOMPONENT_T); cdecl; external;
+procedure ilclient_cleanup_components (list : PAPCOMPONENT_T); cdecl; external;
 
 
 (**
@@ -537,7 +540,7 @@ function ilclient_change_component_state (comp : PCOMPONENT_T;
  *
  * @return void
  ***********************************************************)
-procedure ilclient_state_transition (list : PCOMPONENT_T;
+procedure ilclient_state_transition (list : PAPCOMPONENT_T;
                                      state : OMX_STATETYPE); cdecl; external;
 
 
@@ -984,9 +987,6 @@ function ilclient_wait_for_command_complete_dual (comp : PCOMPONENT_T;
  ***********************************************************)
 function ilclient_get_handle (comp : PCOMPONENT_T) : OMX_HANDLETYPE; cdecl; external;
 
-
-
-
 (**
  * Macro to return <DFN>OMX_TICKS</DFN> from a signed 64 bit value.
  * This is the version where <DFN>OMX_TICKS</DFN> is a signed 64 bit
@@ -1077,7 +1077,13 @@ function ilclient_stack_size : Longword; cdecl; external;
 
 implementation
 
-initialization
+procedure set_tunnel (t : PTUNNEL_T;  a : PCOMPONENT_T;  b : integer; c : PCOMPONENT_T; d : integer);
+begin
+  t^.source := a;
+  t^.source_port := b;
+  t^.sink := c;
+  t^.sink_port := d;
+end;
 
 end.
 

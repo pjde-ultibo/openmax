@@ -29,13 +29,33 @@ interface
 uses
   Classes, SysUtils, VC4;
 
+const
+  OMX_MAX_STRINGNAME_SIZE                  = 128;
+  OMX_BUFFERFLAG_EOS                       = $00000001;
+  OMX_BUFFERFLAG_STARTTIME                 = $00000002;
+  OMX_BUFFERFLAG_DECODEONLY                = $00000004;
+  OMX_BUFFERFLAG_DATACORRUPT               = $00000008;
+  OMX_BUFFERFLAG_ENDOFFRAME                = $00000010;
+  OMX_BUFFERFLAG_SYNCFRAME                 = $00000020;
+  OMX_BUFFERFLAG_EXTRADATA                 = $00000040;
+  OMX_BUFFERFLAG_CODECCONFIG               = $00000080;
+
+  OMX_BUFFERFLAG_TIME_UNKNOWN              = $00000100;
+  OMX_BUFFERFLAG_ENDOFNAL                  = $00000400;
+  OMX_BUFFERFLAG_FRAGMENTLIST              = $00000800;
+  OMX_BUFFERFLAG_DISCONTINUITY             = $00001000;
+  OMX_BUFFERFLAG_CODECSIDEINFO             = $00002000;
+
+
 type
   OMX_U8                                   = uint8;
   POMX_U8                                  = ^OMX_U8;
+  PPOMX_U8                                 = ^POMX_U8;
   OMX_S8                                   = Int8;
   OMX_U16                                  = uint16;
   OMX_S16                                  = Int16;
   OMX_U32                                  = uint32;
+  POMX_U32                                 = ^OMX_U32;
   OMX_S32                                  = integer;
   OMX_U64                                  = uint64;
   OMX_S64                                  = Int64;
@@ -124,7 +144,6 @@ const
   OMX_ErrorNotReady                        = $80001010;
   (* There was a timeout that occurred *)
   OMX_ErrorTimeout                         = $80001011;
-
   (* This error occurs when trying to transition into the state you are already in *)
   OMX_ErrorSameState                       = $80001012;
   (* Resources allocated to an executing or paused component have been
@@ -216,6 +235,8 @@ type
     nStartPortNumber : OMX_U32;                          (* first port number for this type of port *)
   end;
   POMX_PORT_PARAM_TYPE = ^OMX_PORT_PARAM_TYPE;
+
+
 
 type
   OMX_EVENTTYPE = LongWord;
@@ -720,6 +741,22 @@ type
   POMX_AUDIO_PORTDEFINITIONTYPE = ^OMX_AUDIO_PORTDEFINITIONTYPE;
 
   OMX_VIDEO_CODINGTYPE = LongWord;
+  POMX_VIDEO_CODINGTYPE = ^OMX_VIDEO_CODINGTYPE;
+
+const
+  OMX_VIDEO_CodingUnused                   = 0;          (* Value when coding is N/A *)
+  OMX_VIDEO_CodingAutoDetect               = 1;          (* Autodetection of coding type *)
+  OMX_VIDEO_CodingMPEG2                    = 2;          (* AKA: H.262 *)
+  OMX_VIDEO_CodingH263                     = 3;          (* H.263 *)
+  OMX_VIDEO_CodingMPEG4                    = 4;          (* MPEG-4 *)
+  OMX_VIDEO_CodingWMV                      = 5;          (* all versions of Windows Media Video *)
+  OMX_VIDEO_CodingRV                       = 6;          (* all versions of Real Video *)
+  OMX_VIDEO_CodingAVC                      = 7;          (* H.264/AVC *)
+  OMX_VIDEO_CodingMJPEG                    = 8;          (* Motion JPEG *)
+  OMX_VIDEO_CodingKhronosExtensions        = $6F000000;  (* Reserved region for introducing Khronos Standard Extensions *)
+  OMX_VIDEO_CodingVendorStartUnused        = $7F000000;  (* Reserved region for introducing Vendor Extensions *)
+
+type
   OMX_COLOR_FORMATTYPE = LongWord;
 
   OMX_VIDEO_PORTDEFINITIONTYPE = record
@@ -737,6 +774,17 @@ type
     pNativeWindow : OMX_NATIVE_WINDOWTYPE;
   end;
   POMX_VIDEO_PORTDEFINITIONTYPE = ^OMX_VIDEO_PORTDEFINITIONTYPE;
+
+  OMX_VIDEO_PARAM_PORTFORMATTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    nIndex : OMX_U32;
+    eCompressionFormat : OMX_VIDEO_CODINGTYPE;
+    eColorFormat : OMX_COLOR_FORMATTYPE;
+    xFramerate : OMX_U32;
+  end;
+  POMX_VIDEO_PARAM_PORTFORMATTYPE = ^OMX_VIDEO_PARAM_PORTFORMATTYPE;
 
   OMX_IMAGE_CODINGTYPE = LongWord;
   POMX_IMAGE_CODINGTYPE = ^OMX_IMAGE_CODINGTYPE;
@@ -794,6 +842,30 @@ const
   OMX_OTHER_FormatMax                      = $7FFFFFFF;
 
 type
+  OMX_TIME_CLOCKSTATE = LongWord;
+
+const
+  OMX_TIME_ClockStateRunning               = 0; (* Clock running. *)
+  OMX_TIME_ClockStateWaitingForStartTime   = 1; (* Clock waiting until the
+                                                   prescribed clients emit their
+                                                   start time. *)
+  OMX_TIME_ClockStateStopped = 2;               (* Clock stopped. *)
+  OMX_TIME_ClockStateKhronosExtensions     = $6F000000; (* Reserved region for introducing Khronos Standard Extensions *)
+  OMX_TIME_ClockStateVendorStartUnused     = $7F000000; (* Reserved region for introducing Vendor Extensions *)
+  OMX_TIME_ClockStateMax                   = $7FFFFFFF;
+
+type
+  OMX_TIME_CONFIG_CLOCKSTATETYPE = record
+    nSize : OMX_U32;                     (* size of the structure in bytes *)
+    nVersion : OMX_VERSIONTYPE;          (* OMX specification version information *)
+    eState : OMX_TIME_CLOCKSTATE;        (* State of the media time. *)
+    nStartTime : OMX_TICKS;              (* Start time of the media time. *)
+    nOffset : OMX_TICKS;                 (* Time to offset the media time by
+                                            (e.g. preroll). Media time will be
+                                            reported to be nOffset ticks earlier. *)
+    nWaitMask : OMX_U32;                 (* Mask of OMX_CLOCKPORT values. *)
+  end;
+
   OMX_OTHER_PORTDEFINITIONTYPE = record
     eFormat : OMX_OTHER_FORMATTYPE;  (* Type of data expected for this channel *)
   end;
@@ -1046,15 +1118,16 @@ const
   (* Reserved Time range *)
   OMX_IndexTimeStartUnused                 = $09000000;
   OMX_IndexConfigTimeScale                 = $09000001;  (* reference: OMX_TIME_CONFIG_CLOCKSTATETYPE *)
-  OMX_IndexConfigTimeActiveRefClock        = $09000002;  (* reference: OMX_TIME_CONFIG_ACTIVEREFCLOCKTYPE *)
-  OMX_IndexConfigTimeCurrentMediaTime      = $09000003;  (* reference: OMX_TIME_CONFIG_TIMESTAMPTYPE (read only) *)
-  OMX_IndexConfigTimeCurrentWallTime       = $09000004;  (* reference: OMX_TIME_CONFIG_TIMESTAMPTYPE (read only) *)
-  OMX_IndexConfigTimeCurrentAudioReference = $09000005;  (* reference: OMX_TIME_CONFIG_TIMESTAMPTYPE (write only) *)
-  OMX_IndexConfigTimeCurrentVideoReference = $09000006;  (* reference: OMX_TIME_CONFIG_TIMESTAMPTYPE (write only) *)
-  OMX_IndexConfigTimeMediaTimeRequest      = $09000007;  (* reference: OMX_TIME_CONFIG_MEDIATIMEREQUESTTYPE (write only) *)
-  OMX_IndexConfigTimeClientStartTime       = $09000008;  (* reference:  OMX_TIME_CONFIG_TIMESTAMPTYPE (write only) *)
-  OMX_IndexConfigTimePosition              = $09000009;  (* reference: OMX_TIME_CONFIG_TIMESTAMPTYPE *)
-  OMX_IndexConfigTimeSeekMode              = $0900000A;  (* reference: OMX_TIME_CONFIG_SEEKMODETYPE *)
+  OMX_IndexConfigTimeClockState            = $09000002;  (* reference: OMX_TIME_CONFIG_CLOCKSTATETYPE *)
+  OMX_IndexConfigTimeActiveRefClock        = $09000003;  (* reference: OMX_TIME_CONFIG_ACTIVEREFCLOCKTYPE *)
+  OMX_IndexConfigTimeCurrentMediaTime      = $09000004;  (* reference: OMX_TIME_CONFIG_TIMESTAMPTYPE (read only) *)
+  OMX_IndexConfigTimeCurrentWallTime       = $09000005;  (* reference: OMX_TIME_CONFIG_TIMESTAMPTYPE (read only) *)
+  OMX_IndexConfigTimeCurrentAudioReference = $09000006;  (* reference: OMX_TIME_CONFIG_TIMESTAMPTYPE (write only) *)
+  OMX_IndexConfigTimeCurrentVideoReference = $09000007;  (* reference: OMX_TIME_CONFIG_TIMESTAMPTYPE (write only) *)
+  OMX_IndexConfigTimeMediaTimeRequest      = $09000008;  (* reference: OMX_TIME_CONFIG_MEDIATIMEREQUESTTYPE (write only) *)
+  OMX_IndexConfigTimeClientStartTime       = $09000009;  (* reference: OMX_TIME_CONFIG_TIMESTAMPTYPE (write only) *)
+  OMX_IndexConfigTimePosition              = $0900000A;  (* reference: OMX_TIME_CONFIG_TIMESTAMPTYPE *)
+  OMX_IndexConfigTimeSeekMode              = $0900000B;  (* reference: OMX_TIME_CONFIG_SEEKMODETYPE *)
 
   OMX_IndexKhronosExtensions               = $6F000000;  (* Reserved region for introducing Khronos Standard Extensions *)
   (* Vendor specific area *)
@@ -1364,6 +1437,14 @@ function OMX_GetHandle (pHandle : POMX_HANDLETYPE;
                         pAppData : OMX_PTR;
                         pCallBacks : POMX_CALLBACKTYPE) : OMX_ERRORTYPE; cdecl; external;
 
+function OMX_ComponentNameEnum (cComponentName : OMX_STRING;
+                                nNameLength : OMX_U32;
+                                nIndex : OMX_U32) : OMX_ERRORTYPE; cdecl; external;
+function OMX_GetRolesOfComponent (compName : OMX_STRING;
+                                  pNumRoles : POMX_U32;
+                                  roles : PPOMX_U8) : OMX_ERRORTYPE; cdecl; external;
+
+// macros
 function OMX_GetState (hComponent : OMX_HANDLETYPE; pState : POMX_STATETYPE) : OMX_ERRORTYPE;
 
 function OMX_GetParameter (hComponent : OMX_HANDLETYPE;
@@ -1373,6 +1454,12 @@ function OMX_GetParameter (hComponent : OMX_HANDLETYPE;
 function OMX_SetParameter (hComponent : OMX_HANDLETYPE;
                            nParamIndex : OMX_INDEXTYPE;
                            pComponentParameterStructure : OMX_PTR) : OMX_ERRORTYPE;
+
+function OMX_EmptyThisBuffer (hComponent : OMX_HANDLETYPE;
+                              pBuffer : POMX_BUFFERHEADERTYPE) : OMX_ERRORTYPE; cdecl;
+
+function OMX_FillThisBuffer (hComponent : OMX_HANDLETYPE;
+                             pBuffer : POMX_BUFFERHEADERTYPE) : OMX_ERRORTYPE; cdecl;
 
 function OMX_SendCommand (hComponent : OMX_HANDLETYPE;
                           Cmd : OMX_COMMANDTYPE;
@@ -1412,6 +1499,19 @@ function OMX_SendCommand (hComponent : OMX_HANDLETYPE;
                           pCmdData : OMX_PTR) : OMX_ERRORTYPE;
 begin
   Result := POMX_COMPONENTTYPE (hCOmponent)^.SendCommand (hComponent, Cmd, nParam1, pCmdData);
+end;
+
+
+function OMX_EmptyThisBuffer (hComponent : OMX_HANDLETYPE;
+                              pBuffer : POMX_BUFFERHEADERTYPE) : OMX_ERRORTYPE; cdecl;
+begin
+  Result := POMX_COMPONENTTYPE (hCOmponent)^.EmptyThisBuffer (hComponent, pBuffer);
+end;
+
+function OMX_FillThisBuffer (hComponent : OMX_HANDLETYPE;
+                             pBuffer : POMX_BUFFERHEADERTYPE) : OMX_ERRORTYPE; cdecl;
+begin
+  Result := POMX_COMPONENTTYPE (hCOmponent)^.FillThisBuffer (hComponent, pBuffer);
 end;
 
 function OMX_ErrToStr (err : OMX_ERRORTYPE) : string;
