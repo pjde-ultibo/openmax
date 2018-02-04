@@ -540,7 +540,7 @@ function ilclient_change_component_state (comp : PCOMPONENT_T;
  *
  * @return void
  ***********************************************************)
-procedure ilclient_state_transition (list : PAPCOMPONENT_T;
+procedure ilclient_state_transition (list : APCOMPONENT_T;
                                      state : OMX_STATETYPE); cdecl; external;
 
 
