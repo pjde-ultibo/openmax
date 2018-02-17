@@ -27,6 +27,7 @@ var
   Console1, Console2, Console3 : TWindowHandle;
   IPAddress : string;
 
+
 procedure Log1 (s : string);
 begin
   ConsoleWindowWriteLn (Console1, s);
@@ -55,13 +56,12 @@ var
   video_scheduler : PCOMPONENT_T;
   video_render : PCOMPONENT_T;
   clock : PCOMPONENT_T;
-  list : array [0..3] of PCOMPONENT_T;
+  list : array [0..4] of PCOMPONENT_T;
   tunnel : array [0..3] of TUNNEL_T;
   client : PILCLIENT_T;
   f : file;
   status : integer;
   data_len, bytesread : LongWord;
-
   buf : POMX_BUFFERHEADERTYPE;
   port_settings_changed : integer;
   first_packet : integer;
@@ -78,6 +78,8 @@ begin
   list[1] := nil;
   list[2] := nil;
   list[3] := nil;
+  list[4] := nil;
+  tunnel[0].sink_port := 0;   // prevent hint
   FillChar (tunnel, sizeof (tunnel), 0);
   {$I-}
   assign (f, filename);
@@ -108,6 +110,7 @@ begin
   if (status = 0) and (ilclient_create_component (client, @clock, 'clock', ILCLIENT_DISABLE_ALL_PORTS) <> 0) then
     status := -14;
   list[2] := clock;
+  cstate.nSize := 0;   // prevent hint
   FillChar (cstate, sizeof (cstate), 0);
   cstate.nSize := sizeof (cstate);
   cstate.nVersion.nVersion := OMX_VERSION;
@@ -129,6 +132,7 @@ begin
     ilclient_change_component_state (clock, OMX_StateExecuting);
   if status = 0 then
     ilclient_change_component_state (video_decode, OMX_StateIdle);
+  format.nPortIndex := 0;  // prevent hint
   FillChar (format, sizeof (OMX_VIDEO_PARAM_PORTFORMATTYPE), 0);
   format.nSize := sizeof (OMX_VIDEO_PARAM_PORTFORMATTYPE);
   format.nVersion.nVersion := OMX_VERSION;
@@ -170,7 +174,6 @@ begin
               ilclient_change_component_state (video_render, OMX_StateExecuting);
             end;
           if data_len = 0 then break;
-
           buf.nFilledLen := data_len;
           data_len := 0;
           buf.nOffset := 0;
@@ -199,22 +202,16 @@ begin
       ilclient_flush_tunnels (@tunnel, 0);
     end;     // if status = 0
   close (f);
-  Log ('closed file');
   ilclient_disable_tunnel (@tunnel[0]);
   ilclient_disable_tunnel (@tunnel[1]);
   ilclient_disable_tunnel (@tunnel[2]);
-  Log ('disabled tunnels');
   ilclient_disable_port_buffers (video_decode, 130, nil, nil, nil);
-  Log ('disabled ports');
   ilclient_teardown_tunnels (@tunnel);
-//  ilclient_state_transition (@list, OMX_StateIdle);        // hanging
-//  ilclient_state_transition (@list, OMX_StateLoaded);      // hanging
-  Log ('state transitions');
-  ilclient_cleanup_components (@list);
-  Log ('cleaned up components');
+  ilclient_state_transition (@list[0], OMX_StateIdle);        // hanging
+  ilclient_state_transition (@list[0], OMX_StateLoaded);      // hanging
+  ilclient_cleanup_components (@list[0]);
   OMX_Deinit;
   ilclient_destroy (client);
-  Log ('done');
 end;
 
 function WaitForIPComplete : string;

@@ -504,7 +504,7 @@ function ilclient_create_component (handle : PILCLIENT_T;
  *
  * @return void
  ***********************************************************)
-procedure ilclient_cleanup_components (list : PAPCOMPONENT_T); cdecl; external;
+procedure ilclient_cleanup_components (list : PCOMPONENT_T); cdecl; external;
 
 
 (**
@@ -540,7 +540,7 @@ function ilclient_change_component_state (comp : PCOMPONENT_T;
  *
  * @return void
  ***********************************************************)
-procedure ilclient_state_transition (list : APCOMPONENT_T;
+procedure ilclient_state_transition (list : PCOMPONENT_T;
                                      state : OMX_STATETYPE); cdecl; external;
 
 
@@ -800,7 +800,7 @@ function ilclient_get_output_buffer (comp : PCOMPONENT_T;
  ***********************************************************)
 function ilclient_get_input_buffer (comp : PCOMPONENT_T;
                                     portIndex : integer;
-                                    block : integer) : pointer; cdecl; external;
+                                    block : integer) : POMX_BUFFERHEADERTYPE; cdecl; external;
          // OMX_BUFFERHEADERTYPE*
 
 (**
