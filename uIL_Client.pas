@@ -115,9 +115,6 @@ type
    COMPONENT_T = _COMPONENT_T;
    PCOMPONENT_T = ^COMPONENT_T;
    PPCOMPONENT_T = ^PCOMPONENT_T;
-   APCOMPONENT_T = array of PCOMPONENT_T;
-   PAPCOMPONENT_T = ^APCOMPONENT_T;
-
 
 (**
  * The generic callback function is used for communicating events from
@@ -271,7 +268,7 @@ const
                                             if supported by the component. *)
 
 (**
- * \brief This structure represents a tunnel in the OpenMAX IL API.
+ * This structure represents a tunnel in the OpenMAX IL API.
  *
  * Some operations in this API act on a tunnel, so the tunnel state
  * structure (<DFN>TUNNEL_T</DFN>) is a convenient store of the source and sink

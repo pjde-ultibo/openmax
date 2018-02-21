@@ -31,6 +31,17 @@ uses
 
 const
   OMX_MAX_STRINGNAME_SIZE                  = 128;
+  OMX_CONFIG_IMAGEFILTERPARAMS_MAXPARAMS   = 6;
+  OMX_BRCM_MAXIOPERFBANDS                  = 10;
+  OMX_BRCM_MAXANNOTATETEXTLEN              = 256;
+  OMX_CONFIG_FLASHINFOTYPE_NAME_LEN        = 16;
+  OMX_PARAM_CAMERARMITYPE_RMINAME_LEN      = 16;
+  OMX_CONFIG_CAMERAINFOTYPE_NAME_LEN       = 16;
+  OMX_CONFIG_CAMERAINFOTYPE_SERIALNUM_LEN  = 20;
+  OMX_CONFIG_CAMERAINFOTYPE_EPROMVER_LEN   = 8;
+
+  OMX_IndexVendorStartUnused               = $7F000000;
+
   OMX_BUFFERFLAG_EOS                       = $00000001;
   OMX_BUFFERFLAG_STARTTIME                 = $00000002;
   OMX_BUFFERFLAG_DECODEONLY                = $00000004;
@@ -41,207 +52,108 @@ const
   OMX_BUFFERFLAG_CODECCONFIG               = $00000080;
 
   OMX_BUFFERFLAG_TIME_UNKNOWN              = $00000100;
+  OMX_BUFFERFLAG_CAPTURE_PREVIEW           = $00000200;
   OMX_BUFFERFLAG_ENDOFNAL                  = $00000400;
   OMX_BUFFERFLAG_FRAGMENTLIST              = $00000800;
   OMX_BUFFERFLAG_DISCONTINUITY             = $00001000;
   OMX_BUFFERFLAG_CODECSIDEINFO             = $00002000;
+  OMX_BUFFERFLAG_TIME_IS_DTS               = $000004000;
+  OMX_BUFFERFLAG_INTERLACED                = $000010000;
+  OMX_BUFFERFLAG_TOP_FIELD_FIRST           = $000020000;
 
-
-type
-  OMX_U8                                   = uint8;
-  POMX_U8                                  = ^OMX_U8;
-  PPOMX_U8                                 = ^POMX_U8;
-  OMX_S8                                   = Int8;
-  OMX_U16                                  = uint16;
-  OMX_S16                                  = Int16;
-  OMX_U32                                  = uint32;
-  POMX_U32                                 = ^OMX_U32;
-  OMX_S32                                  = integer;
-  OMX_U64                                  = uint64;
-  OMX_S64                                  = Int64;
-  OMX_BOOL                                 = LongBool;
-  OMX_PTR                                  = pointer;
-  OMX_STRING                               = PChar;
-
-  OMX_INDEXTYPE                            = OMX_U32;  // see constants
-  POMX_INDEXTYPE                           = ^OMX_INDEXTYPE;
-
-  OMX_HANDLETYPE                           = pointer;
-  POMX_HANDLETYPE                          = ^OMX_HANDLETYPE;
-  OMX_NATIVE_DEVICETYPE                    = pointer;
-  OMX_NATIVE_WINDOWTYPE                    = pointer;
-  OMX_UUIDTYPE                             = array [0 .. 127] of byte;
-  POMX_UUIDTYPE                            = ^OMX_UUIDTYPE;
-
-  OMX_ENDIANTYPE                           = LongWord;
-  OMX_NUMERICALDATATYPE                    = LongWord;
-
-  {$PACKRECORDS C}
-
-  OMX_MARKTYPE = record
-    hMarkTargetComponent : OMX_HANDLETYPE;   (* The component that will
-                                                generate a mark event upon
-                                                processing the mark. *)
-    pMarkData : OMX_PTR;                     (* Application specific data associated with
-                                                the mark sent on a mark event to disambiguate
-                                                this mark from others. *)
-  end;
-
-
-
-type
-  OMX_PORTDOMAINTYPE                       = Longword;
-
-const
   OMX_PortDomainAudio                      = 0;
   OMX_PortDomainVideo                      = 1;
   OMX_PortDomainImage                      = 2;
   OMX_PortDomainOther                      = 3;
-  OMX_PortDomainKhronosExtensions          = $6F000000; (* Reserved region for introducing Khronos Standard Extensions *)
-  OMX_PortDomainVendorStartUnused          = $7F000000; (* Reserved region for introducing Vendor Extensions *)
+  OMX_PortDomainKhronosExtensions          = $6F000000;  (* Reserved region for introducing Khronos Standard Extensions *)
+  OMX_PortDomainVendorStartUnused          = $7F000000;  (* Reserved region for introducing Vendor Extensions *)
   OMX_PortDomainMax                        = $7ffffff;
 
-type
-  OMX_ERRORTYPE                            = Longword;
+  OMX_FALSE                                = LongBool (false);
+  OMX_TRUE                                 = LongBool (true);
 
-const
+  OMX_NumericalDataSigned                  = 0;          (* signed data *)
+  OMX_NumericalDataUnsigned                = 1;          (* unsigned data *)
+  OMX_NumercialDataMax                     = $7FFFFFFF;
+
+  OMX_EndianBig                            = 0;          (* big endian *)
+  OMX_EndianLittle                         = 1;          (* little endian *)
+  OMX_EndianMax                            = $7FFFFFFF;
+
+  OMX_VERSION_MAJOR                        = 1;
+  OMX_VERSION_MINOR                        = 1;
+  OMX_VERSION_REVISION                     = 2;
+  OMX_VERSION_STEP                         = 0;
+  OMX_VERSION                              = (OMX_VERSION_STEP shl 24) or (OMX_VERSION_REVISION shl 16) or
+                                             (OMX_VERSION_MINOR shl 8) or OMX_VERSION_MAJOR;
+
+  OMX_BufferSupplyUnspecified              = 0;          (* port supplying the buffers is unspecified, or don't care *)
+  OMX_BufferSupplyInput                    = 1;          (* input port supplies the buffers *)
+  OMX_BufferSupplyOutput                   = 2;          (* output port supplies the buffers *)
+  OMX_BufferSupplyKhronosExtensions        = $6F000000;  (* Reserved region for introducing Khronos Standard Extensions *)
+  OMX_BufferSupplyVendorStartUnused        = $7F000000;  (* Reserved region for introducing Vendor Extensions *)
+  OMX_BufferSupplyMax                      = $7FFFFFFF;
+
   OMX_ErrorNone                            = 0;
-  (* There were insufficient resources to perform the requested operation *)
-  OMX_ErrorInsufficientResources           = $80001000;
-  (* There was an error, but the cause of the error could not be determined *)
-  OMX_ErrorUndefined                       = $80001001;
-  (* The component name string was not valid *)
-  OMX_ErrorInvalidComponentName            = $80001002;
-  (* No component with the specified name string was found *)
-  OMX_ErrorComponentNotFound               = $80001003;
-  (* The component specified did not have a "OMX_ComponentInit" or
-      "OMX_ComponentDeInit entry point *)
-  OMX_ErrorInvalidComponent                = $80001004;
-  (* One or more parameters were not valid *)
-  OMX_ErrorBadParameter                    = $80001005;
-  (* The requested function is not implemented *)
-  OMX_ErrorNotImplemented                  = $80001006;
-  (* The buffer was emptied before the next buffer was ready *)
-  OMX_ErrorUnderflow                       = $80001007;
-  (* The buffer was not available when it was needed *)
-  OMX_ErrorOverflow                        = $80001008;
-  (* The hardware failed to respond as expected *)
-  OMX_ErrorHardware                        = $80001009;
-  (* The component is in the state OMX_StateInvalid *)
-  OMX_ErrorInvalidState                    = $8000100A;
-  (* Stream is found to be corrupt *)
-  OMX_ErrorStreamCorrupt                   = $8000100B;
-  (* Ports being connected are not compatible *)
-  OMX_ErrorPortsNotCompatible              = $8000100C;
-  (* Resources allocated to an idle component have been
-      lost resulting in the component returning to the loaded state *)
-  OMX_ErrorResourcesLost                   = $8000100D;
-  (* No more indicies can be enumerated *)
-  OMX_ErrorNoMore                          = $8000100E;
-  (* The component detected a version mismatch *)
-  OMX_ErrorVersionMismatch                 = $8000100F;
-  (* The component is not ready to return data at this time *)
-  OMX_ErrorNotReady                        = $80001010;
-  (* There was a timeout that occurred *)
-  OMX_ErrorTimeout                         = $80001011;
-  (* This error occurs when trying to transition into the state you are already in *)
-  OMX_ErrorSameState                       = $80001012;
-  (* Resources allocated to an executing or paused component have been
-      preempted, causing the component to return to the idle state *)
-  OMX_ErrorResourcesPreempted              = $80001013;
-  (* A non-supplier port sends this error to the IL client (via the EventHandler callback)
-      during the allocation of buffers (on a transition from the LOADED to the IDLE state or
-      on a port restart) when it deems that it has waited an unusually long time for the supplier
-      to send it an allocated buffer via a UseBuffer call. *)
-  OMX_ErrorPortUnresponsiveDuringAllocation = $80001014;
-  (* A non-supplier port sends this error to the IL client (via the EventHandler callback)
-      during the deallocation of buffers (on a transition from the IDLE to LOADED state or
-      on a port stop) when it deems that it has waited an unusually long time for the supplier
-      to request the deallocation of a buffer header via a FreeBuffer call. *)
-  OMX_ErrorPortUnresponsiveDuringDeallocation = $80001015;
-  (* A supplier port sends this error to the IL client (via the EventHandler callback)
-      during the stopping of a port (either on a transition from the IDLE to LOADED
-      state or a port stop) when it deems that it has waited an unusually long time for
-      the non-supplier to return a buffer via an EmptyThisBuffer or FillThisBuffer call. *)
-  OMX_ErrorPortUnresponsiveDuringStop      = $80001016;
-  (* Attempting a state transtion that is not allowed *)
-  OMX_ErrorIncorrectStateTransition        = $80001017;
-  (* Attempting a command that is not allowed during the present state. *)
-  OMX_ErrorIncorrectStateOperation         = $80001018;
-  (* The values encapsulated in the parameter or config structure are not supported. *)
-  OMX_ErrorUnsupportedSetting              = $80001019;
-  (* The parameter or config indicated by the given index is not supported. *)
-  OMX_ErrorUnsupportedIndex                = $8000101A;
-  (* The port index supplied is incorrect. *)
-  OMX_ErrorBadPortIndex                    = $8000101B;
-  (* The port has lost one or more of its buffers and it thus unpopulated. *)
-  OMX_ErrorPortUnpopulated                 = $8000101C;
-  (* Component suspended due to temporary loss of resources *)
-  OMX_ErrorComponentSuspended              = $8000101D;
-  (* Component suspended due to an inability to acquire dynamic resources *)
-  OMX_ErrorDynamicResourcesUnavailable     = $8000101E;
-  (* When the macroblock error reporting is enabled the component returns new error
-  for every frame that has errors *)
-  OMX_ErrorMbErrorsInFrame                 = $8000101F;
-  (* A component reports this error when it cannot parse or determine the format of an input stream. *)
-  OMX_ErrorFormatNotDetected               = $80001020;
-  (* The content open operation failed. *)
-  OMX_ErrorContentPipeOpenFailed           = $80001021;
-  (* The content creation operation failed. *)
-  OMX_ErrorContentPipeCreationFailed       = $80001022;
-  (* Separate table information is being used *)
-  OMX_ErrorSeperateTablesUsed              = $80001023;
-  (* Tunneling is unsupported by the component*)
-  OMX_ErrorTunnelingUnsupported            = $80001024;
-  (* Reserved region for introducing Khronos Standard Extensions *)
-  OMX_ErrorKhronosExtensions               = $8F000000;
-  (* Reserved region for introducing Vendor Extensions *)
-  OMX_ErrorVendorStartUnused               = $90000000;
-  (* Disk Full error *)
-  OMX_ErrorDiskFull                        = $90000001;
-  (* Max file size is reached *)
-  OMX_ErrorMaxFileSize                     = $90000002;
-  (* Unauthorised to play a DRM protected file *)
-  OMX_ErrorDrmUnauthorised                 = $90000003;
-  (* The DRM protected file has expired *)
-  OMX_ErrorDrmExpired                      = $90000004;
-  (* Some other DRM library error *)
-  OMX_ErrorDrmGeneral                      = $90000005;
+  OMX_ErrorInsufficientResources           = $80001000;  (* There were insufficient resources to perform the requested operation *)
+  OMX_ErrorUndefined                       = $80001001;  (* There was an error, but the cause of the error could not be determined *)
+  OMX_ErrorInvalidComponentName            = $80001002;  (* The component name string was not valid *)
+  OMX_ErrorComponentNotFound               = $80001003;  (* No component with the specified name string was found *)
+  OMX_ErrorInvalidComponent                = $80001004;  (* The component specified did not have a "OMX_ComponentInit" or
+                                                            "OMX_ComponentDeInit entry point *)
+  OMX_ErrorBadParameter                    = $80001005;  (* One or more parameters were not valid *)
+  OMX_ErrorNotImplemented                  = $80001006;  (* The requested function is not implemented *)
+  OMX_ErrorUnderflow                       = $80001007;  (* The buffer was emptied before the next buffer was ready *)
+  OMX_ErrorOverflow                        = $80001008;  (* The buffer was not available when it was needed *)
+  OMX_ErrorHardware                        = $80001009;  (* The hardware failed to respond as expected *)
+  OMX_ErrorInvalidState                    = $8000100A;  (* The component is in the state OMX_StateInvalid *)
+  OMX_ErrorStreamCorrupt                   = $8000100B;  (* Stream is found to be corrupt *)
+  OMX_ErrorPortsNotCompatible              = $8000100C;  (* Ports being connected are not compatible *)
+  OMX_ErrorResourcesLost                   = $8000100D;  (* Resources allocated to an idle component have been
+                                                            lost resulting in the component returning to the loaded state *)
+  OMX_ErrorNoMore                          = $8000100E;  (* No more indicies can be enumerated *)
+  OMX_ErrorVersionMismatch                 = $8000100F;  (* The component detected a version mismatch *)
+  OMX_ErrorNotReady                        = $80001010;  (* The component is not ready to return data at this time *)
+  OMX_ErrorTimeout                         = $80001011;  (* There was a timeout that occurred *)
+  OMX_ErrorSameState                       = $80001012;  (* This error occurs when trying to transition into the state you are already in *)
+  OMX_ErrorResourcesPreempted              = $80001013;  (* Resources allocated to an executing or paused component have been
+                                                            preempted, causing the component to return to the idle state *)
+  OMX_ErrorPortUnresponsiveDuringAllocation = $80001014; (* A non-supplier port sends this error to the IL client (via the EventHandler callback)
+                                                            during the allocation of buffers (on a transition from the LOADED to the IDLE state or
+                                                            on a port restart) when it deems that it has waited an unusually long time for the supplier
+                                                            to send it an allocated buffer via a UseBuffer call. *)
+  OMX_ErrorPortUnresponsiveDuringDeallocation = $80001015; (* A non-supplier port sends this error to the IL client (via the EventHandler callback)
+                                                              during the deallocation of buffers (on a transition from the IDLE to LOADED state or
+                                                              on a port stop) when it deems that it has waited an unusually long time for the supplier
+                                                              to request the deallocation of a buffer header via a FreeBuffer call. *)
+  OMX_ErrorPortUnresponsiveDuringStop      = $80001016;  (* A supplier port sends this error to the IL client (via the EventHandler callback)
+                                                            during the stopping of a port (either on a transition from the IDLE to LOADED
+                                                            state or a port stop) when it deems that it has waited an unusually long time for
+                                                            the non-supplier to return a buffer via an EmptyThisBuffer or FillThisBuffer call. *)
+  OMX_ErrorIncorrectStateTransition        = $80001017;  (* Attempting a state transtion that is not allowed *)
+  OMX_ErrorIncorrectStateOperation         = $80001018;  (* Attempting a command that is not allowed during the present state. *)
+  OMX_ErrorUnsupportedSetting              = $80001019;  (* The values encapsulated in the parameter or config structure are not supported. *)
+  OMX_ErrorUnsupportedIndex                = $8000101A;  (* The parameter or config indicated by the given index is not supported. *)
+  OMX_ErrorBadPortIndex                    = $8000101B;  (* The port index supplied is incorrect. *)
+  OMX_ErrorPortUnpopulated                 = $8000101C;  (* The port has lost one or more of its buffers and it thus unpopulated. *)
+  OMX_ErrorComponentSuspended              = $8000101D;  (* Component suspended due to temporary loss of resources *)
+  OMX_ErrorDynamicResourcesUnavailable     = $8000101E;  (* Component suspended due to an inability to acquire dynamic resources *)
+  OMX_ErrorMbErrorsInFrame                 = $8000101F;  (* When the macroblock error reporting is enabled the component returns new error
+                                                            for every frame that has errors *)
+  OMX_ErrorFormatNotDetected               = $80001020;  (* A component reports this error when it cannot parse or determine the format of an input stream. *)
+  OMX_ErrorContentPipeOpenFailed           = $80001021;  (* The content open operation failed. *)
+  OMX_ErrorContentPipeCreationFailed       = $80001022;  (* The content creation operation failed. *)
+  OMX_ErrorSeperateTablesUsed              = $80001023;  (* Separate table information is being used *)
+  OMX_ErrorTunnelingUnsupported            = $80001024;  (* Tunneling is unsupported by the component*)
+  OMX_ErrorKhronosExtensions               = $8F000000;  (* Reserved region for introducing Khronos Standard Extensions *)
+  OMX_ErrorVendorStartUnused               = $90000000;  (* Reserved region for introducing Vendor Extensions *)
+  OMX_ErrorDiskFull                        = $90000001;  (* Disk Full error *)
+  OMX_ErrorMaxFileSize                     = $90000002;  (* Max file size is reached *)
+  OMX_ErrorDrmUnauthorised                 = $90000003;  (* Unauthorised to play a DRM protected file *)
+  OMX_ErrorDrmExpired                      = $90000004;  (* The DRM protected file has expired *)
+  OMX_ErrorDrmGeneral                      = $90000005;  (* Some other DRM library error *)
   OMX_ErrorMax                             = $7FFFFFFF;
 
-type
-  OMX_VERSIONTYPE = record
-    case boolean of
-      false :
-        (
-          nVersionMajor : OMX_U8;   (* Major version accessor element *)
-          nVersionMinor : OMX_U8;   (* Minor version accessor element *)
-          nRevision : OMX_U8;       (* Revision version accessor element *)
-          nStep : OMX_U8;           (* Step version accessor element *)
-        );
-      true :
-        (
-          nVersion : OMX_U32;       (* 32 bit value to make accessing the
-                                       version easily done in a single word
-                                       size copy/compare operation *)
-        )
-  end;
-  POMX_VERSIONTYPE = ^OMX_VERSIONTYPE;
-
-  OMX_PORT_PARAM_TYPE = record
-    nSize : OMX_U32;                                     (* size of the structure in bytes *)
-    nVersion : OMX_VERSIONTYPE;                          (* OMX specification version information *)
-    nPorts : OMX_U32;                                    (* The number of ports for this component *)
-    nStartPortNumber : OMX_U32;                          (* first port number for this type of port *)
-  end;
-  POMX_PORT_PARAM_TYPE = ^OMX_PORT_PARAM_TYPE;
-
-
-
-type
-  OMX_EVENTTYPE = LongWord;
-
-const
   OMX_EventCmdComplete                     = 0;          (* component has sucessfully completed a command *)
   OMX_EventError                           = 1;          (* component has detected an error condition *)
   OMX_EventMark                            = 2;          (* component has detected a buffer mark *)
@@ -258,217 +170,10 @@ const
   OMX_EventParamOrConfigChanged            = $7F000001;  (* Should be added to the main spec as part of IL416c *)
   OMX_EventMax                             = $7FFFFFFF;
 
-type
-  OMX_TICKS = record
-    nLowPart : OMX_U32;                    (* low bits of the signed 64 bit tick value *)
-    nHighPart : OMX_U32;                   (* high bits of the signed 64 bit tick value *)
-  end;
-  POMX_TICKS = ^OMX_TICKS;
-
-  OMX_BUFFERHEADERTYPE = record
-    nSize : OMX_U32;                       (* size of the structure in bytes *)
-    nVersion : OMX_VERSIONTYPE;            (* OMX specification version information *)
-    pBuffer : POMX_U8;                     (* Pointer to actual block of memory
-                                              that is acting as the buffer *)
-    nAllocLen : OMX_U32;                   (* size of the buffer allocated, in bytes *)
-    nFilledLen : OMX_U32;                  (* number of bytes currently in the buffer *)
-    nOffset : OMX_U32;                     (* start offset of valid data in bytes from
-                                              the start of the buffer *)
-    pAppPrivate : OMX_PTR;                 (* pointer to any data the application
-                                              wants to associate with this buffer *)
-    pPlatformPrivate  : OMX_PTR;           (* pointer to any data the platform
-                                              wants to associate with this buffer *)
-    pInputPortPrivate : OMX_PTR;           (* pointer to any data the input port
-                                              wants to associate with this buffer *)
-    pOutputPortPrivate  : OMX_PTR;         (* pointer to any data the output port
-                                              wants to associate with this buffer *)
-    hMarkTargetComponent : OMX_HANDLETYPE; (* The component that will generate a
-                                              mark event upon processing this buffer. *)
-    pMarkData : OMX_PTR;                   (* Application specific data associated with
-                                              the mark sent on a mark event to disambiguate
-                                              this mark from others. *)
-    nTickCount : OMX_U32;                  (* Optional entry that the component and
-                                              application can update with a tick count
-                                              when they access the component.  This
-                                              value should be in microseconds.  Since
-                                              this is a value relative to an arbitrary
-                                              starting point, this value cannot be used
-                                              to determine absolute time.  This is an
-                                              optional entry and not all components
-                                              will update it.*)
-    nTimeStamp : OMX_TICKS;                (* Timestamp corresponding to the sample
-                                              starting at the first logical sample
-                                              boundary in the buffer. Timestamps of
-                                              successive samples within the buffer may
-                                              be inferred by adding the duration of the
-                                              of the preceding buffer to the timestamp
-                                              of the preceding buffer.*)
-    nFlags : OMX_U32;                      (* buffer specific flags *)
-    nOutputPortIndex : OMX_U32;            (* The index of the output port (if any) using
-                                              this buffer *)
-    nInputPortIndex : OMX_U32;             (* The index of the input port (if any) using
-                                              this buffer *)
-  end;
-  POMX_BUFFERHEADERTYPE                    = ^OMX_BUFFERHEADERTYPE;
-  PPOMX_BUFFERHEADERTYPE                   = ^POMX_BUFFERHEADERTYPE;
-
-
-
-  TEventHandler = function (hComponent : OMX_HANDLETYPE;
-                            pAppData : OMX_PTR;
-                            eEvent : OMX_EVENTTYPE;
-                            nData1 : OMX_U32;
-                            nData2 : OMX_U32;
-                            pEventData : OMX_PTR) : OMX_ERRORTYPE; cdecl;
-
-  TFillBufferDone = function (hComponent : OMX_HANDLETYPE;
-                              pAppData : OMX_PTR;
-                              pBuffer : POMX_BUFFERHEADERTYPE) : OMX_ERRORTYPE; cdecl;
-
-  TEmptyBufferDone = function (hComponent : OMX_HANDLETYPE;
-                               pAppData : OMX_PTR;
-                               pBuffer : POMX_BUFFERHEADERTYPE) : OMX_ERRORTYPE; cdecl;
-
-
-  OMX_CALLBACKTYPE = record
-    EventHandler : TEventHandler;
-
-    (* The EventHandler method is used to notify the application when an
-        event of interest occurs.  Events are defined in the OMX_EVENTTYPE
-        enumeration.  Please see that enumeration for details of what will
-        be returned for each type of event. Callbacks should not return
-        an error to the component, so if an error occurs, the application
-        shall handle it internally.  This is a blocking call.
-
-        The application should return from this call within 5 msec to avoid
-        blocking the component for an excessively long period of time.
-
-        @param hComponent
-            handle of the component to access.  This is the component
-            handle returned by the call to the GetHandle function.
-        @param pAppData
-            pointer to an application defined value that was provided in the
-            pAppData parameter to the OMX_GetHandle method for the component.
-            This application defined value is provided so that the application
-            can have a component specific context when receiving the callback.
-        @param eEvent
-            Event that the component wants to notify the application about.
-        @param nData1
-            nData will be the OMX_ERRORTYPE for an error event and will be
-            an OMX_COMMANDTYPE for a command complete event and OMX_INDEXTYPE for a OMX_PortSettingsChanged event.
-         @param nData2
-            nData2 will hold further information related to the event. Can be OMX_STATETYPE for
-            a OMX_CommandStateSet command or port index for a OMX_PortSettingsChanged event.
-            Default value is 0 if not used. )
-        @param pEventData
-            Pointer to additional event-specific data (see spec for meaning).
-      *)
-
-    EmptyBufferDone : TEmptyBufferDone;
-    (* The EmptyBufferDone method is used to return emptied buffers from an
-        input port back to the application for reuse.  This is a blocking call
-        so the application should not attempt to refill the buffers during this
-        call, but should queue them and refill them in another thread.  There
-        is no error return, so the application shall handle any errors generated
-        internally.
-
-        The application should return from this call within 5 msec.
-
-        @param hComponent
-            handle of the component to access.  This is the component
-            handle returned by the call to the GetHandle function.
-        @param pAppData
-            pointer to an application defined value that was provided in the
-            pAppData parameter to the OMX_GetHandle method for the component.
-            This application defined value is provided so that the application
-            can have a component specific context when receiving the callback.
-        @param pBuffer
-            pointer to an OMX_BUFFERHEADERTYPE structure allocated with UseBuffer
-            or AllocateBuffer indicating the buffer that was emptied.
-        @ingroup buf
-     *)
-
-    FillBufferDone : TFillBufferDone;
-    (* The FillBufferDone method is used to return filled buffers from an
-        output port back to the application for emptying and then reuse.
-        This is a blocking call so the application should not attempt to
-        empty the buffers during this call, but should queue the buffers
-        and empty them in another thread.  There is no error return, so
-        the application shall handle any errors generated internally.  The
-        application shall also update the buffer header to indicate the
-        number of bytes placed into the buffer.
-
-        The application should return from this call within 5 msec.
-
-        @param hComponent
-            handle of the component to access.  This is the component
-            handle returned by the call to the GetHandle function.
-        @param pAppData
-            pointer to an application defined value that was provided in the
-            pAppData parameter to the OMX_GetHandle method for the component.
-            This application defined value is provided so that the application
-            can have a component specific context when receiving the callback.
-        @param pBuffer
-            pointer to an OMX_BUFFERHEADERTYPE structure allocated with UseBuffer
-            or AllocateBuffer indicating the buffer that was filled.
-        @ingroup buf  *)
-  end;
-  POMX_CALLBACKTYPE                        = ^OMX_CALLBACKTYPE;
-
-  OMX_BUFFERSUPPLIERTYPE = Longword;
-
-
-  OMX_TUNNELSETUPTYPE = record
-    nTunnelFlags : OMX_U32;                  (* bit flags for tunneling *)
-    eSupplier : OMX_BUFFERSUPPLIERTYPE;      (* supplier preference *)
-  end;
-  POMX_TUNNELSETUPTYPE                     = ^OMX_TUNNELSETUPTYPE;
-
-const
-  OMX_FALSE                                = LongBool (false);
-  OMX_TRUE                                 = LongBool (true);
-
-  OMX_NumericalDataSigned                  = 0; (* signed data *)
-  OMX_NumericalDataUnsigned                = 1; (* unsigned data *)
-  OMX_NumercialDataMax                     = $7FFFFFFF;
-
-  OMX_EndianBig                            = 0; (* big endian *)
-  OMX_EndianLittle                         = 1; (* little endian *)
-  OMX_EndianMax                            = $7FFFFFFF;
-
-  OMX_VERSION_MAJOR                        = 1;
-  OMX_VERSION_MINOR                        = 1;
-  OMX_VERSION_REVISION                     = 2;
-  OMX_VERSION_STEP                         = 0;
-  OMX_VERSION                              = (OMX_VERSION_STEP shl 24) or (OMX_VERSION_REVISION shl 16) or
-                                             (OMX_VERSION_MINOR shl 8) or OMX_VERSION_MAJOR;
-
-
-
-  OMX_BufferSupplyUnspecified              = 0;          (* port supplying the buffers is unspecified,
-                                                            or don't care *)
-  OMX_BufferSupplyInput                    = 1;          (* input port supplies the buffers *)
-  OMX_BufferSupplyOutput                   = 2;          (* output port supplies the buffers *)
-  OMX_BufferSupplyKhronosExtensions        = $6F000000;  (* Reserved region for introducing Khronos Standard Extensions *)
-  OMX_BufferSupplyVendorStartUnused        = $7F000000;  (* Reserved region for introducing Vendor Extensions *)
-  OMX_BufferSupplyMax                      = $7FFFFFFF;
-
-
-
-
-
-type
-  OMX_DIRTYPE = Longword;
-
-const
   OMX_DirInput                             = 0;         (* Port is an input port *)
   OMX_DirOutput                            = 1;         (* Port is an output port *)
   OMX_DirMax                               = $7FFFFFFF;
 
-type
-  OMX_COMMANDTYPE = Longword;
-
-const
   OMX_CommandStateSet                      = 0;         (* Change the component state *)
   OMX_CommandFlush                         = 1;         (* Flush the data queue(s) of a component *)
   OMX_CommandPortDisable                   = 2;         (* Disable a port on a component. *)
@@ -478,11 +183,6 @@ const
   OMX_CommandVendorStartUnused             = $7F000000; (* Reserved region for introducing Vendor Extensions *)
   OMX_CommandMax                           = $7FFFFFFF;
 
-type
-  OMX_STATETYPE                            = Longword;
-  POMX_STATETYPE                           = ^OMX_STATETYPE;
-
-const
   OMX_StateInvalid                         = 0;         (* component has detected that it's internal data
                                                            structures are corrupted to the point that
                                                            it cannot determine it's state properly *)
@@ -504,246 +204,6 @@ const
   OMX_StateVendorStartUnused               = $7F000000; (* Reserved region for introducing Vendor Extensions *)
   OMX_StateMax                             = $7FFFFFFF;
 
-type
-  TGetComponentVersion = function (hComponent  : OMX_HANDLETYPE;
-                                   pComponentName : OMX_STRING;
-                                   pComponentVersion : POMX_VERSIONTYPE;
-                                   pSpecVersion : POMX_VERSIONTYPE;
-                                   pComponentUUID : POMX_UUIDTYPE) : OMX_ERRORTYPE; cdecl;
-
-  TSendCommand = function (hComponent : OMX_HANDLETYPE;
-                           Cmd : OMX_COMMANDTYPE;
-                           nParam1 : OMX_U32;
-                           pCmdData : OMX_PTR) : OMX_ERRORTYPE; cdecl;
-
-  TGetParameter = function (hComponent : OMX_HANDLETYPE;
-                            nParamIndex : OMX_INDEXTYPE;
-                            pComponentParameterStructure : OMX_PTR) : OMX_ERRORTYPE; cdecl;
-
-  TSetParameter = function (hComponent : OMX_HANDLETYPE;
-                            nIndex : OMX_INDEXTYPE;
-                            pComponentParameterStructure : OMX_PTR) : OMX_ERRORTYPE; cdecl;
-
-  TGetConfig = function (hComponent : OMX_HANDLETYPE;
-                         nIndex : OMX_INDEXTYPE;
-                         pComponentConfigStructure : OMX_PTR) : OMX_ERRORTYPE; cdecl;
-
-  TSetConfig = function (hComponent : OMX_HANDLETYPE;
-                         nIndex : OMX_INDEXTYPE;
-                         pComponentConfigStructure : OMX_PTR) : OMX_ERRORTYPE; cdecl;
-
-  TGetExtensionIndex = function (hComponent : OMX_HANDLETYPE;
-                                 cParameterName : OMX_STRING;
-                                 pIndexType : POMX_INDEXTYPE) : OMX_ERRORTYPE; cdecl;
-
-  TGetState = function (hComponent : OMX_HANDLETYPE;
-                        pState : POMX_STATETYPE) : OMX_ERRORTYPE; cdecl;
-
-  TComponentTunnelRequest = function (hComp : OMX_HANDLETYPE;
-                                      nPort : OMX_U32;
-                                      hTunneledComp : OMX_HANDLETYPE;
-                                      nTunneledPort : OMX_U32;
-                                      pTunnelSetup : POMX_TUNNELSETUPTYPE) : OMX_ERRORTYPE; cdecl;
-
-  TUseBuffer = function (hComponent : OMX_HANDLETYPE;
-                         ppBufferHdr : PPOMX_BUFFERHEADERTYPE;
-                         nPortIndex : OMX_U32;
-                         pAppPrivate : OMX_PTR;
-                         nSizeBytes : OMX_U32;
-                         pBuffer : POMX_U8) : OMX_ERRORTYPE; cdecl;
-
-  TAllocateBuffer = function (hComponent : OMX_HANDLETYPE;
-                              ppBuffer : PPOMX_BUFFERHEADERTYPE;
-                              nPortIndex : OMX_U32;
-                              pAppPrivate : OMX_PTR;
-                              nSizeBytes : OMX_U32) : OMX_ERRORTYPE; cdecl;
-
-  TFreeBuffer = function (hComponent : OMX_HANDLETYPE;
-                          nPortIndex : OMX_U32;
-                          pBuffer : POMX_BUFFERHEADERTYPE) : OMX_ERRORTYPE; cdecl;
-
-  TEmptyThisBuffer = function (hComponent : OMX_HANDLETYPE;
-                               pBuffer : POMX_BUFFERHEADERTYPE) : OMX_ERRORTYPE; cdecl;
-
-  TFillThisBuffer = function (hComponent : OMX_HANDLETYPE;
-                              pBuffer : POMX_BUFFERHEADERTYPE) : OMX_ERRORTYPE; cdecl;
-
-  TSetCallbacks = function (hComponent : OMX_HANDLETYPE;
-                                         pCallbacks : POMX_CALLBACKTYPE;
-                                         pAppData : OMX_PTR) : OMX_ERRORTYPE; cdecl;
-
-  TComponentDeInit = function (hComponent : OMX_HANDLETYPE) : OMX_ERRORTYPE; cdecl;
-
-  TUseEGLImage = function (hComponent : OMX_HANDLETYPE;
-                           ppBufferHdr : PPOMX_BUFFERHEADERTYPE;
-                           nPortIndex : OMX_U32;
-                           pAppPrivate : OMX_PTR;
-                           eglImage : Pointer) : OMX_ERRORTYPE; cdecl;
-
-  TComponentRoleEnum = function (hComponent : OMX_HANDLETYPE;
-                    		         cRole : POMX_U8;
-                                 nIndex : OMX_U32) : OMX_ERRORTYPE; cdecl;
-
-  OMX_COMPONENTTYPE = record
-    nSize : OMX_U32;                         (* The size of this structure, in bytes.  It is the responsibility
-                                                of the allocator of this structure to fill in this value.  Since
-                                                this structure is allocated by the GetHandle function, this
-                                                function will fill in this value. *)
-    nVersion : OMX_VERSIONTYPE;              (* nVersion is the version of the OMX specification that the structure
-                                                is built against.  It is the responsibility of the creator of this
-                                                structure to initialize this value and every user of this structure
-                                                should verify that it knows how to use the exact version of
-                                                this structure found herein. *)
-    pComponentPrivate : OMX_PTR;             (* pComponentPrivate is a pointer to the component private data area.
-                                                This member is allocated and initialized by the component when the
-                                                component is first loaded.  The application should not access this
-                                                data area. *)
-    pApplicationPrivate : OMX_PTR;           (* pApplicationPrivate is a pointer that is a parameter to the
-                                                OMX_GetHandle method, and contains an application private value
-                                                provided by the IL client.  This application private data is
-                                                returned to the IL Client by OMX in all callbacks *)
-    GetComponentVersion : TGetComponentVersion; (* refer to OMX_GetComponentVersion in OMX_core.h or the OMX IL
-                                                   specification for details on the GetComponentVersion method. *)
-    SendCommand : TSendCommand;              (* refer to OMX_SendCommand in OMX_core.h or the OMX IL
-                                                specification for details on the SendCommand method. *)
-    GetParameter : TGetParameter;            (* refer to OMX_GetParameter in OMX_core.h or the OMX IL
-                                                specification for details on the GetParameter method. *)
-    SetParameter : TSetParameter;            (* refer to OMX_SetParameter in OMX_core.h or the OMX IL
-                                                specification for details on the SetParameter method. *)
-    GetConfig : TGetConfig;                  (* refer to OMX_GetConfig in OMX_core.h or the OMX IL
-                                                specification for details on the GetConfig method. *)
-    SetConfig : TSetConfig;                  (* refer to OMX_SetConfig in OMX_core.h or the OMX IL
-                                                specification for details on the SetConfig method.*)
-    GetExtensionIndex : TGetExtensionIndex;  (* refer to OMX_GetExtensionIndex in OMX_core.h or the OMX IL
-                                                specification for details on the GetExtensionIndex method. *)
-    GetState : TGetState;                    (* refer to OMX_GetState in OMX_core.h or the OMX IL
-                                                specification for details on the GetState method. *)
-    ComponentTunnelRequest : TComponentTunnelRequest; (* The ComponentTunnelRequest method will interact with another OMX
-                                                         component to determine if tunneling is possible and to setup the
-                                                         tunneling.  The return codes for this method can be used to
-                                                         determine if tunneling is not possible, or if tunneling is not
-                                                         supported.
-
-        Base profile components (i.e. non-interop) do not support this
-        method and should return OMX_ErrorNotImplemented
-
-        The interop profile component MUST support tunneling to another
-        interop profile component with a compatible port parameters.
-        A component may also support proprietary communication.
-
-        If proprietary communication is supported the negotiation of
-        proprietary communication is done outside of OMX in a vendor
-        specific way. It is only required that the proper result be
-        returned and the details of how the setup is done is left
-        to the component implementation.
-
-        When this method is invoked when nPort in an output port, the
-        component will:
-        1.  Populate the pTunnelSetup structure with the output port's
-            requirements and constraints for the tunnel.
-
-        When this method is invoked when nPort in an input port, the
-        component will:
-        1.  Query the necessary parameters from the output port to
-            determine if the ports are compatible for tunneling
-        2.  If the ports are compatible, the component should store
-            the tunnel step provided by the output port
-        3.  Determine which port (either input or output) is the buffer
-            supplier, and call OMX_SetParameter on the output port to
-            indicate this selection.
-
-        The component will return from this call within 5 msec.
-
-        @param [in] hComp
-            Handle of the component to be accessed.  This is the component
-            handle returned by the call to the OMX_GetHandle method.
-        @param [in] nPort
-            nPort is used to select the port on the component to be used
-            for tunneling.
-        @param [in] hTunneledComp
-            Handle of the component to tunnel with.  This is the component
-            handle returned by the call to the OMX_GetHandle method.  When
-            this parameter is 0x0 the component should setup the port for
-            communication with the application / IL Client.
-        @param [in] nPortOutput
-            nPortOutput is used indicate the port the component should
-            tunnel with.
-        @param [in] pTunnelSetup
-            Pointer to the tunnel setup structure.  When nPort is an output port
-            the component should populate the fields of this structure.  When
-            When nPort is an input port the component should review the setup
-            provided by the component with the output port.
-        @return OMX_ERRORTYPE
-            If the command successfully executes, the return code will be
-            OMX_ErrorNone.  Otherwise the appropriate OMX error will be returned.
-        @ingroup tun  *)
-    UseBuffer : TUseBuffer;                  (* refer to OMX_UseBuffer in OMX_core.h or the OMX IL
-                                                specification for details on the UseBuffer method.
-                                                @ingroup buf *)
-    AllocateBuffer : TAllocateBuffer;        (* refer to OMX_AllocateBuffer in OMX_core.h or the OMX IL
-                                                specification for details on the AllocateBuffer method.
-                                                @ingroup buf *)
-    FreeBuffer : TFreeBuffer;                (* refer to OMX_FreeBuffer in OMX_core.h or the OMX IL
-                                                specification for details on the FreeBuffer method.
-                                                @ingroup buf *)
-    EmptyThisBuffer : TEmptyThisBuffer;      (* refer to OMX_EmptyThisBuffer in OMX_core.h or the OMX IL
-                                                specification for details on the EmptyThisBuffer method.
-                                                @ingroup buf  *)
-    FillThisBuffer : TFillThisBuffer;        (* refer to OMX_FillThisBuffer in OMX_core.h or the OMX IL
-                                                specification for details on the FillThisBuffer method.
-                                                @ingroup buf *)
-    SetCallbacks : TSetCallbacks;            (* The SetCallbacks method is used by the core to specify the callback
-                                                structure from the application to the component.  This is a blocking
-                                                call.  The component will return from this call within 5 msec.
-
-        @param [in] hComponent
-            Handle of the component to be accessed.  This is the component
-            handle returned by the call to the GetHandle function.
-        @param [in] pCallbacks
-            pointer to an OMX_CALLBACKTYPE structure used to provide the
-            callback information to the component
-        @param [in] pAppData
-            pointer to an application defined value.  It is anticipated that
-            the application will pass a pointer to a data structure or a "this
-            pointer" in this area to allow the callback (in the application)
-            to determine the context of the call
-        @return OMX_ERRORTYPE
-            If the command successfully executes, the return code will be
-            OMX_ErrorNone.  Otherwise the appropriate OMX error will be returned. *)
-    ComponentDeInit : TComponentDeInit;        (* ComponentDeInit method is used to deinitialize the component
-                                                  providing a means to free any resources allocated at component
-                                                  initialization.  NOTE:  After this call the component handle is
-                                                  not valid for further use.
-        @param [in] hComponent
-            Handle of the component to be accessed.  This is the component
-            handle returned by the call to the GetHandle function.
-        @return OMX_ERRORTYPE
-            If the command successfully executes, the return code will be
-            OMX_ErrorNone.  Otherwise the appropriate OMX error will be returned.   *)
-    UseEGLImage : TUseEGLImage;
-    ComponentRoleEnum : TComponentRoleEnum;
-  end;
-  POMX_COMPONENTTYPE = ^OMX_COMPONENTTYPE;
-
-
-  OMX_AUDIO_CODINGTYPE = LongWord;
-
-  OMX_AUDIO_PORTDEFINITIONTYPE = record
-    cMIMEType : OMX_STRING;                (* MIME type of data for the port *)
-    pNativeRender : OMX_NATIVE_DEVICETYPE; (* platform specific reference
-                                              for an output device,
-                                              otherwise this field is 0 *)
-    bFlagErrorConcealment : OMX_BOOL;      (* Turns on error concealment if it is
-                                              supported by the OMX component *)
-    eEncoding : OMX_AUDIO_CODINGTYPE;      (* Type of data expected for this
-                                              port (e.g. PCM, AMR, MP3, etc) *)
-  end;
-  POMX_AUDIO_PORTDEFINITIONTYPE = ^OMX_AUDIO_PORTDEFINITIONTYPE;
-
-  OMX_VIDEO_CODINGTYPE = LongWord;
-  POMX_VIDEO_CODINGTYPE = ^OMX_VIDEO_CODINGTYPE;
-
-const
   OMX_VIDEO_CodingUnused                   = 0;          (* Value when coding is N/A *)
   OMX_VIDEO_CodingAutoDetect               = 1;          (* Autodetection of coding type *)
   OMX_VIDEO_CodingMPEG2                    = 2;          (* AKA: H.262 *)
@@ -756,40 +216,6 @@ const
   OMX_VIDEO_CodingKhronosExtensions        = $6F000000;  (* Reserved region for introducing Khronos Standard Extensions *)
   OMX_VIDEO_CodingVendorStartUnused        = $7F000000;  (* Reserved region for introducing Vendor Extensions *)
 
-type
-  OMX_COLOR_FORMATTYPE = LongWord;
-
-  OMX_VIDEO_PORTDEFINITIONTYPE = record
-    cMIMEType : OMX_STRING;
-    pNativeRender : OMX_NATIVE_DEVICETYPE;
-    nFrameWidth : OMX_U32;
-    nFrameHeight : OMX_U32;
-    nStride : OMX_S32;
-    nSliceHeight : OMX_U32;
-    nBitrate : OMX_U32;
-    xFramerate : OMX_U32;
-    bFlagErrorConcealment : OMX_BOOL;
-    eCompressionFormat : OMX_VIDEO_CODINGTYPE;
-    eColorFormat : OMX_COLOR_FORMATTYPE;
-    pNativeWindow : OMX_NATIVE_WINDOWTYPE;
-  end;
-  POMX_VIDEO_PORTDEFINITIONTYPE = ^OMX_VIDEO_PORTDEFINITIONTYPE;
-
-  OMX_VIDEO_PARAM_PORTFORMATTYPE = record
-    nSize : OMX_U32;
-    nVersion : OMX_VERSIONTYPE;
-    nPortIndex : OMX_U32;
-    nIndex : OMX_U32;
-    eCompressionFormat : OMX_VIDEO_CODINGTYPE;
-    eColorFormat : OMX_COLOR_FORMATTYPE;
-    xFramerate : OMX_U32;
-  end;
-  POMX_VIDEO_PARAM_PORTFORMATTYPE = ^OMX_VIDEO_PARAM_PORTFORMATTYPE;
-
-  OMX_IMAGE_CODINGTYPE = LongWord;
-  POMX_IMAGE_CODINGTYPE = ^OMX_IMAGE_CODINGTYPE;
-
-const
   OMX_IMAGE_CodingUnused                   = $0;         (* Value when format is N/A *)
   OMX_IMAGE_CodingAutoDetect               = $1;         (* Auto detection of image format *)
   OMX_IMAGE_CodingJPEG                     = $2;         (* JPEG/JFIF image format *)
@@ -806,24 +232,6 @@ const
   OMX_IMAGE_CodingPPM                      = $7F000002;
   OMX_IMAGE_CodingMax                      = $7FFFFFFF;
 
-type
-  OMX_IMAGE_PORTDEFINITIONTYPE = record
-    cMIMEType : OMX_STRING;
-    pNativeRender : OMX_NATIVE_DEVICETYPE;
-    nFrameWidth : OMX_U32;
-    nFrameHeight : OMX_U32;
-    nStride : OMX_S32;
-    nSliceHeight : OMX_U32;
-    bFlagErrorConcealment : OMX_BOOL;
-    eCompressionFormat : OMX_IMAGE_CODINGTYPE;
-    eColorFormat : OMX_COLOR_FORMATTYPE;
-    pNativeWindow : OMX_NATIVE_WINDOWTYPE;
-  end;
-  POMX_IMAGE_PORTDEFINITIONTYPE = ^OMX_IMAGE_PORTDEFINITIONTYPE;
-
-  OMX_OTHER_FORMATTYPE = LongWord;
-
-const
 
   OMX_OTHER_FormatTime                     = 0;          (* Transmission of various timestamps, elapsed time,
                                                             time deltas, etc *)
@@ -841,69 +249,15 @@ const
   OMX_OTHER_FormatText3GP5                 = $7F000003;
   OMX_OTHER_FormatMax                      = $7FFFFFFF;
 
-type
-  OMX_TIME_CLOCKSTATE = LongWord;
-
-const
-  OMX_TIME_ClockStateRunning               = 0; (* Clock running. *)
-  OMX_TIME_ClockStateWaitingForStartTime   = 1; (* Clock waiting until the
-                                                   prescribed clients emit their
-                                                   start time. *)
-  OMX_TIME_ClockStateStopped = 2;               (* Clock stopped. *)
-  OMX_TIME_ClockStateKhronosExtensions     = $6F000000; (* Reserved region for introducing Khronos Standard Extensions *)
-  OMX_TIME_ClockStateVendorStartUnused     = $7F000000; (* Reserved region for introducing Vendor Extensions *)
+  OMX_TIME_ClockStateRunning               = 0;          (* Clock running. *)
+  OMX_TIME_ClockStateWaitingForStartTime   = 1;          (* Clock waiting until the
+                                                            prescribed clients emit their
+                                                            start time. *)
+  OMX_TIME_ClockStateStopped = 2;                        (* Clock stopped. *)
+  OMX_TIME_ClockStateKhronosExtensions     = $6F000000;  (* Reserved region for introducing Khronos Standard Extensions *)
+  OMX_TIME_ClockStateVendorStartUnused     = $7F000000;  (* Reserved region for introducing Vendor Extensions *)
   OMX_TIME_ClockStateMax                   = $7FFFFFFF;
 
-type
-  OMX_TIME_CONFIG_CLOCKSTATETYPE = record
-    nSize : OMX_U32;                     (* size of the structure in bytes *)
-    nVersion : OMX_VERSIONTYPE;          (* OMX specification version information *)
-    eState : OMX_TIME_CLOCKSTATE;        (* State of the media time. *)
-    nStartTime : OMX_TICKS;              (* Start time of the media time. *)
-    nOffset : OMX_TICKS;                 (* Time to offset the media time by
-                                            (e.g. preroll). Media time will be
-                                            reported to be nOffset ticks earlier. *)
-    nWaitMask : OMX_U32;                 (* Mask of OMX_CLOCKPORT values. *)
-  end;
-
-  OMX_OTHER_PORTDEFINITIONTYPE = record
-    eFormat : OMX_OTHER_FORMATTYPE;  (* Type of data expected for this channel *)
-  end;
-  POMX_OTHER_PORTDEFINITIONTYPE = ^OMX_OTHER_PORTDEFINITIONTYPE;
-
-  OMX_FORMAT = record
-    case integer of
-     1 : (audio : OMX_AUDIO_PORTDEFINITIONTYPE);
-     2 : (video : OMX_VIDEO_PORTDEFINITIONTYPE);
-     3 : (image : OMX_IMAGE_PORTDEFINITIONTYPE);
-     4 : (other : OMX_OTHER_PORTDEFINITIONTYPE);
-  end;
-
-  OMX_PARAM_PORTDEFINITIONTYPE = record
-    nSize : OMX_U32;                 (* Size of the structure in bytes *)
-    nVersion : OMX_VERSIONTYPE;      (* OMX specification version information *)
-    nPortIndex : OMX_U32;            (* Port number the structure applies to *)
-    eDir : OMX_DIRTYPE;              (* Direction (input or output) of this port *)
-    nBufferCountActual : OMX_U32;    (* The actual number of buffers allocated on this port *)
-    nBufferCountMin : OMX_U32;       (* The minimum number of buffers this port requires *)
-    nBufferSize : OMX_U32;           (* Size, in bytes, for buffers to be used for this channel *)
-    bEnabled : OMX_BOOL;             (* Ports default to enabled and are enabled/disabled by
-                                        OMX_CommandPortEnable/OMX_CommandPortDisable.
-                                        When disabled a port is unpopulated. A disabled port
-                                        is not populated with buffers on a transition to IDLE. *)
-    bPopulated : OMX_BOOL;           (* Port is populated with all of its buffers as indicated by
-                                        nBufferCountActual. A disabled port is always unpopulated.
-                                        An enabled port is populated on a transition to OMX_StateIdle
-                                        and unpopulated on a transition to loaded. *)
-    eDomain : OMX_PORTDOMAINTYPE;    (* Domain of the port. Determines the contents of metadata below. *)
-    format : OMX_FORMAT;
-    bBuffersContiguous : OMX_BOOL;
-    nBufferAlignment : OMX_U32;
-  end;
-
-  OMX_AUDIO_PCMMODETYPE = Longword;
-
-const
   OMX_AUDIO_PCMModeLinear                  = 0;          (* Linear PCM encoded data *)
   OMX_AUDIO_PCMModeALaw                    = 1;          (* A law PCM encoded data (G.711) *)
   OMX_AUDIO_PCMModeMULaw                   = 2;          (* Mu law PCM encoded data (G.711)  *)
@@ -911,10 +265,6 @@ const
   OMX_AUDIO_PCMModeVendorStartUnused       = $7F000000;  (* Reserved region for introducing Vendor Extensions *)
   OMX_AUDIO_PCMModeMax                     = $7FFFFFFF;
 
-type
-  OMX_AUDIO_CHANNELTYPE = Longword;
-
-const
   OMX_AUDIO_ChannelNone                    = $0;         (* Unused or empty *)
   OMX_AUDIO_ChannelLF                      = $1;         (* Left front *)
   OMX_AUDIO_ChannelRF                      = $2;         (* Right front *)
@@ -931,25 +281,327 @@ const
 
   OMX_AUDIO_MAXCHANNELS                    = 16;         (* maximum number distinct audio channels that a buffer may contain *)
 
-type
-  OMX_AUDIO_PARAM_PCMMODETYPE = record
-    nSize : OMX_U32;                    (* Size of this structure, in Bytes *)
-    nVersion : OMX_VERSIONTYPE;         (* OMX specification version information *)
-    nPortIndex : OMX_U32;               (* port that this structure applies to *)
-    nChannels : OMX_U32;                (* Number of channels (e.g. 2 for stereo) *)
-    eNumData : OMX_NUMERICALDATATYPE;   (* indicates PCM data as signed or unsigned *)
-    eEndian : OMX_ENDIANTYPE;           (* indicates PCM data as little or big endian *)
-    bInterleaved : OMX_BOOL;            (* True for normal interleaved data; false for
-                                           non-interleaved data (e.g. block data) *)
-    nBitPerSample : OMX_U32;            (* Bit per sample *)
-    nSamplingRate : OMX_U32;            (* Sampling rate of the source data.  Use 0 for
-                                           variable or unknown sampling rate. *)
-    ePCMMode : OMX_AUDIO_PCMMODETYPE;   (* PCM mode enumeration *)
-    eChannelMapping : array [0 .. OMX_AUDIO_MAXCHANNELS - 1] of OMX_AUDIO_CHANNELTYPE; (* Slot i contains channel defined by eChannelMap[i] *)
-  end;
+  OMX_DISPLAY_ROT0                         = 0;
+  OMX_DISPLAY_MIRROR_ROT0                  = 1;
+  OMX_DISPLAY_MIRROR_ROT180                = 2;
+  OMX_DISPLAY_ROT180                       = 3;
+  OMX_DISPLAY_MIRROR_ROT90                 = 4;
+  OMX_DISPLAY_ROT270                       = 5;
+  OMX_DISPLAY_ROT90                        = 6;
+  OMX_DISPLAY_MIRROR_ROT270                = 7;
+  OMX_DISPLAY_DUMMY                        = $7FFFFFFF;
 
+  OMX_DISPLAY_MODE_FILL                    = 0;
+  OMX_DISPLAY_MODE_LETTERBOX               = 1;
+  OMX_DISPLAY_MODE_STEREO_LEFT_TO_LEFT     = 2;
+  OMX_DISPLAY_MODE_STEREO_TOP_TO_TOP       = 3;
+  OMX_DISPLAY_MODE_STEREO_LEFT_TO_TOP      = 4;
+  OMX_DISPLAY_MODE_STEREO_TOP_TO_LEFT      = 5;
+  OMX_DISPLAY_MODE_DUMMY                   = $7FFFFFFF;
 
-const
+  OMX_DISPLAY_SET_NONE                     = 0;
+  OMX_DISPLAY_SET_NUM                      = 1;
+  OMX_DISPLAY_SET_FULLSCREEN               = 2;
+  OMX_DISPLAY_SET_TRANSFORM                = 4;
+  OMX_DISPLAY_SET_DEST_RECT                = 8;
+  OMX_DISPLAY_SET_SRC_RECT                 = $10;
+  OMX_DISPLAY_SET_MODE                     = $20;
+  OMX_DISPLAY_SET_PIXEL                    = $40;
+  OMX_DISPLAY_SET_NOASPECT                 = $80;
+  OMX_DISPLAY_SET_LAYER                    = $100;
+  OMX_DISPLAY_SET_COPYPROTECT              = $200;
+  OMX_DISPLAY_SET_ALPHA                    = $400;
+  OMX_DISPLAY_SET_DUMMY                    = $7FFFFFFF;
+
+  OMX_SOURCE_WHITE                         = 0;
+  OMX_SOURCE_BLACK                         = 1;
+  OMX_SOURCE_DIAGONAL                      = 2;
+  OMX_SOURCE_NOISE                         = 3;
+  OMX_SOURCE_RANDOM                        = 4;
+  OMX_SOURCE_COLOUR                        = 5;
+  OMX_SOURCE_BLOCKS                        = 6;
+  OMX_SOURCE_SWIRLY                        = 7;
+  OMX_SOURCE_DUMMY                         = $7FFFFFFF;
+
+  OMX_RESIZE_NONE                          = 0;
+  OMX_RESIZE_CROP                          = 1;
+  OMX_RESIZE_BOX                           = 2;
+  OMX_RESIZE_BYTES                         = 3;
+  OMX_RESIZE_DUMMY                         = $7FFFFFFF;
+
+  OMX_PLAYMODE_NORMAL                      = 0;
+  OMX_PLAYMODE_FF                          = 1;
+  OMX_PLAYMODE_REW                         = 2;
+  OMX_PLAYMODE_DUMMY                       = $7FFFFFFF;
+
+  OMX_DELIVERYFORMAT_STREAM                = 0;
+  OMX_DELIVERYFORMAT_SINGLE_PACKET         = 1;
+  OMX_DELIVERYFORMAT_DUMMY                 = $7FFFFFFF;
+
+  OMX_AUDIOMONOTRACKOPERATIONS_NOP         = 0;
+  OMX_AUDIOMONOTRACKOPERATIONS_L_TO_R      = 1;
+  OMX_AUDIOMONOTRACKOPERATIONS_R_TO_L      = 2;
+  OMX_AUDIOMONOTRACKOPERATIONS_DUMMY       = $7FFFFFFF;
+
+  OMX_CAMERAIMAGEPOOLINPUTMODE_ONEPOOL     = 0;
+  OMX_CAMERAIMAGEPOOLINPUTMODE_TWOPOOLS    = 1;
+
+  OMX_COMMONFLICKERCANCEL_OFF              = 0;
+  OMX_COMMONFLICKERCANCEL_AUTO             = 1;
+  OMX_COMMONFLICKERCANCEL_50               = 2;
+  OMX_COMMONFLICKERCANCEL_60               = 3;
+  OMX_COMMONFLICKERCANCEL_DUMMY            = $7FFFFFFF;
+
+  OMX_RedEyeRemovalNone                    = 0;
+  OMX_RedEyeRemovalOn                      = 1;
+  OMX_RedEyeRemovalAuto                    = 2;
+  OMX_RedEyeRemovalKhronosExtensions       = $6F000000;
+  OMX_RedEyeRemovalVendorStartUnused       = $7F000000;
+  OMX_RedEyeRemovalSimple                  = $7F000001;
+  OMX_RedEyeRemovalMax                     = $7FFFFFFF;
+
+  OMX_FaceDetectionControlNone             = 0;
+  OMX_FaceDetectionControlOn               = 1;
+  OMX_FaceDetectionControlKhronosExtensions = $6F000000;
+  OMX_FaceDetectionControlVendorStartUnused = $7F000000;
+  OMX_FaceDetectionControlMax              = $7FFFFFFF;
+
+  OMX_FaceRegionFlagsNone                  = 0;
+  OMX_FaceRegionFlagsBlink                 = 1;
+  OMX_FaceRegionFlagsSmile                 = 2;
+  OMX_FaceRegionFlagsKhronosExtensions     = $6F000000;
+  OMX_FaceRegionFlagsVendorStartUnused     = $7F000000;
+  OMX_FaceRegionFlagsMax                   = $7FFFFFFF;
+
+  OMX_InterlaceProgressive                 = 0;
+  OMX_InterlaceFieldSingleUpperFirst       = 1;
+  OMX_InterlaceFieldSingleLowerFirst       = 2;
+  OMX_InterlaceFieldsInterleavedUpperFirst = 3;
+  OMX_InterlaceFieldsInterleavedLowerFirst = 4;
+  OMX_InterlaceMixed                       = 5;
+  OMX_InterlaceKhronosExtensions           = $6F000000;
+  OMX_InterlaceVendorStartUnused           = $7F000000;
+  OMX_InterlaceMax                         = $7FFFFFFF;
+
+  OMX_AFAssistAuto                         = 0;
+  OMX_AFAssistOn                           = 1;
+  OMX_AFAssistOff                          = 2;
+  OMX_AFAssistTorch                        = 3;
+  OMX_AFAssistKhronosExtensions            = $6F000000;
+  OMX_AFAssistVendorStartUnused            = $7F000000;
+  OMX_AFAssistMax                          = $7FFFFFFF;
+
+  OMX_PrivacyIndicatorOff                  = 0;
+  OMX_PrivacyIndicatorOn                   = 1;
+  OMX_PrivacyIndicatorForceOn              = 2;
+  OMX_PrivacyIndicatorKhronosExtensions    = $6F000000;
+  OMX_PrivacyIndicatorVendorStartUnused    = $7F000000;
+  OMX_PrivacyIndicatorMax                  = $7FFFFFFF;
+
+  OMX_CameraFlashDefault                   = 0;
+  OMX_CameraFlashXenon                     = 1;
+  OMX_CameraFlashLED                       = 2;
+  OMX_CameraFlashNone                      = 3;
+  OMX_CameraFlashKhronosExtensions         = $6F000000;
+  OMX_CameraFlashVendorStartUnused         = $7F000000;
+  OMX_CameraFlashMax                       = $7FFFFFFF;
+
+  OMX_CameraFlashConfigSyncFrontSlow       = 0;
+  OMX_CameraFlashConfigSyncRearSlow        = 1;
+  OMX_CameraFlashConfigSyncFrontFast       = 2;
+  OMX_CameraFlashConfigSyncKhronosExtensions = $6F000000;
+  OMX_CameraFlashConfigSyncVendorStartUnused = $7F000000;
+  OMX_CameraFlashConfigSyncMax             = $7FFFFFFF;
+
+  OMX_PixelValueRangeUnspecified           = 0;
+  OMX_PixelValueRangeITU_R_BT601           = 1;
+  OMX_PixelValueRangeFull8Bit              = 2;
+  OMX_PixelValueRangeKhronosExtensions     = $6F000000;
+  OMX_PixelValueRangeVendorStartUnused     = $7F000000;
+  OMX_PixelValueRangeMax                   = $7FFFFFFF;
+
+  OMX_CameraDisableAlgorithmFacetracking   = 0;
+  OMX_CameraDisableAlgorithmRedEyeReduction = 1;
+  OMX_CameraDisableAlgorithmVideoStabilisation = 2;
+  OMX_CameraDisableAlgorithmWriteRaw       = 3;
+  OMX_CameraDisableAlgorithmVideoDenoise   = 4;
+  OMX_CameraDisableAlgorithmStillsDenoise  = 5;
+  OMX_CameraDisableAlgorithmAntiShake      = 6;
+  OMX_CameraDisableAlgorithmImageEffects   = 7;
+  OMX_CameraDisableAlgorithmDarkSubtract   = 8;
+  OMX_CameraDisableAlgorithmDynamicRangeExpansion = 9;
+  OMX_CameraDisableAlgorithmFaceRecognition = 10;
+  OMX_CameraDisableAlgorithmFaceBeautification = 11;
+  OMX_CameraDisableAlgorithmSceneDetection = 12;
+  OMX_CameraDisableAlgorithmHighDynamicRange = 13;
+  OMX_CameraDisableAlgorithmKhronosExtensions = $6F000000;
+  OMX_CameraDisableAlgorithmVendorStartUnused = $7F000000;
+  OMX_CameraDisableAlgorithmMax            = $7FFFFFFF;
+
+  OMX_CameraUseCaseAuto                    = 0;
+  OMX_CameraUseCaseVideo                   = 1;
+  OMX_CameraUseCaseStills                  = 2;
+  OMX_CameraUseCaseKhronosExtensions       = $6F000000;
+  OMX_CameraUseCaseVendorStartUnused       = $7F000000;
+  OMX_CameraUseCaseMax                     = $7FFFFFFF;
+
+  OMX_CameraFeaturesShutterUnknown         = 0;
+  OMX_CameraFeaturesShutterNotPresent      = 1;
+  OMX_CameraFeaturesShutterPresent         = 2;
+  OMX_CameraFeaturesShutterKhronosExtensions = $6F000000;
+  OMX_CameraFeaturesShutterVendorStartUnused = $7F000000;
+  OMX_CameraFeaturesShutterMax             = $7FFFFFFF;
+
+  OMX_FocusRegionNormal                    = 0;
+  OMX_FocusRegionFace                      = 1;
+  OMX_FocusRegionMax                       = 2;
+
+  OMX_DynRangeExpOff                       = 0;
+  OMX_DynRangeExpLow                       = 1;
+  OMX_DynRangeExpMedium                    = 2;
+  OMX_DynRangeExpHigh                      = 3;
+  OMX_DynRangeExpKhronosExtensions         = $6F000000;
+  OMX_DynRangeExpVendorStartUnused         = $7F000000;
+  OMX_DynRangeExpMax                       = $7FFFFFFF;
+
+  OMX_BrcmThreadAffinityCPU0               = 0;
+  OMX_BrcmThreadAffinityCPU1               = 1;
+  OMX_BrcmThreadAffinityMax                = $7FFFFFFF;
+
+  OMX_SceneDetectUnknown                   = 0;
+  OMX_SceneDetectLandscape                 = 1;
+  OMX_SceneDetectPortrait                  = 2;
+  OMX_SceneDetectMacro                     = 3;
+  OMX_SceneDetectNight                     = 4;
+  OMX_SceneDetectPortraitNight             = 5;
+  OMX_SceneDetectBacklit                   = 6;
+  OMX_SceneDetectPortraitBacklit           = 7;
+  OMX_SceneDetectSunset                    = 8;
+  OMX_SceneDetectBeach                     = 9;
+  OMX_SceneDetectSnow                      = 10;
+  OMX_SceneDetectFireworks                 = 11;
+  OMX_SceneDetectMax                       = $7FFFFFFF;
+
+  OMX_IndexKhronosExtensions               = $6F000000;  // check
+  OMX_IndexExtVideoStartUnused             = OMX_IndexKhronosExtensions + $00600000;
+  OMX_IndexParamNalStreamFormatSupported   = OMX_IndexExtVideoStartUnused + 1;
+  OMX_IndexParamNalStreamFormat            = OMX_IndexExtVideoStartUnused + 2;
+  OMX_IndexParamNalStreamFormatSelect      = OMX_IndexExtVideoStartUnused + 3;
+  OMX_IndexExtMax                          = $7FFFFFFF;
+
+  OMX_NaluFormatStartCodes                 = 1;
+  OMX_NaluFormatOneNaluPerBuffer           = 2;
+  OMX_NaluFormatOneByteInterleaveLength    = 4;
+  OMX_NaluFormatTwoByteInterleaveLength    = 8;
+  OMX_NaluFormatFourByteInterleaveLength   = 16;
+  OMX_NaluFormatCodingMax                  = $7FFFFFFF;
+
+  OMX_StaticBoxNormal                      = 0;
+  OMX_StaticBoxPrimaryFaceAfIdle           = 1;
+  OMX_StaticBoxNonPrimaryFaceAfIdle        = 2;
+  OMX_StaticBoxFocusRegionAfIdle           = 3;
+  OMX_StaticBoxPrimaryFaceAfSuccess        = 4;
+  OMX_StaticBoxNonPrimaryFaceAfSuccess     = 5;
+  OMX_StaticBoxFocusRegionAfSuccess        = 6;
+  OMX_StaticBoxPrimaryFaceAfFail           = 7;
+  OMX_StaticBoxNonPrimaryFaceAfFail        = 8;
+  OMX_StaticBoxFocusRegionAfFail           = 9;
+  OMX_StaticBoxMax                         = 10;
+
+  OMX_CameraCaptureModeWaitForCaptureEnd   = 0;
+  OMX_CameraCaptureModeWaitForCaptureEndAndUsePreviousInputImage = 1;
+  OMX_CameraCaptureModeResumeViewfinderImmediately = 2;
+  OMX_CameraCaptureModeMax                 = 3;
+
+  OMX_DrmEncryptionNone                    = 0;
+  OMX_DrmEncryptionHdcp2                   = 1;
+  OMX_DrmEncryptionKhronosExtensions       = $6F000000;
+  OMX_DrmEncryptionVendorStartUnused       = $7F000000;
+  OMX_DrmEncryptionRangeMax                = $7FFFFFFF;
+
+  OMX_TimestampModeZero                    = 0;
+  OMX_TimestampModeRawStc                  = 1;
+  OMX_TimestampModeResetStc                = 2;
+  OMX_TimestampModeKhronosExtensions       = $6F000000;
+  OMX_TimestampModeVendorStartUnused       = $7F000000;
+  OMX_TimestampModeMax                     = $7FFFFFFF;
+
+  OMX_COLORSPACE_UNKNOWN                   = 0;
+  OMX_COLORSPACE_JPEG_JFIF                 = 1;
+  OMX_COLORSPACE_ITU_R_BT601               = 2;
+  OMX_COLORSPACE_ITU_R_BT709               = 3;
+  OMX_COLORSPACE_FCC                       = 4;
+  OMX_COLORSPACE_SMPTE240M                 = 5;
+  OMX_COLORSPACE_BT470_2_M                 = 6;
+  OMX_COLORSPACE_BT470_2_BG                = 7;
+  OMX_COLORSPACE_JFIF_Y16_255              = 8;
+  OMX_COLORSPACE_MAX                       = $7FFFFFFF;
+
+  OMX_NotCapturing                         = 0;
+  OMX_CaptureStarted                       = 1;
+  OMX_CaptureComplete                      = 2;
+  OMX_CaptureMax                           = $7FFFFFFF;
+
+  OMX_STEREOSCOPIC_NONE                    = 0;
+  OMX_STEREOSCOPIC_SIDEBYSIDE              = 1;
+  OMX_STEREOSCOPIC_TOPBOTTOM               = 2;
+  OMX_STEREOSCOPIC_MAX                     = $7FFFFFFF;
+
+  OMX_CAMERAINTERFACE_CSI                  = 0;
+  OMX_CAMERAINTERFACE_CCP2                 = 1;
+  OMX_CAMERAINTERFACE_CPI                  = 2;
+  OMX_CAMERAINTERFACE_MAX                  = $7FFFFFFF;
+
+  OMX_CAMERACLOCKINGMODE_STROBE            = 0;
+  OMX_CAMERACLOCKINGMODE_CLOCK             = 1;
+  OMX_CAMERACLOCKINGMODE_MAX               = $7FFFFFFF;
+
+  OMX_CAMERARXDECODE_NONE                  = 0;
+  OMX_CAMERARXDECODE_DPCM8TO10             = 1;
+  OMX_CAMERARXDECODE_DPCM7TO10             = 2;
+  OMX_CAMERARXDECODE_DPCM6TO10             = 3;
+  OMX_CAMERARXDECODE_DPCM8TO12             = 4;
+  OMX_CAMERARXDECODE_DPCM7TO12             = 5;
+  OMX_CAMERARXDECODE_DPCM6TO12             = 6;
+  OMX_CAMERARXDECODE_DPCM10TO14            = 7;
+  OMX_CAMERARXDECODE_DPCM8TO14             = 8;
+  OMX_CAMERARXDECODE_DPCM12TO16            = 9;
+  OMX_CAMERARXDECODE_DPCM10TO16            = 10;
+  OMX_CAMERARXDECODE_DPCM8TO16             = 11;
+  OMX_CAMERARXDECODE_MAX                   = $7FFFFFFF;
+
+  OMX_CAMERARXENCODE_NONE                  = 0;
+  OMX_CAMERARXENCODE_DPCM10TO8             = 1;
+  OMX_CAMERARXENCODE_DPCM12TO8             = 2;
+  OMX_CAMERARXENCODE_DPCM14TO8             = 3;
+  OMX_CAMERARXENCODE_MAX                   = $7FFFFFFF;
+
+  OMX_CAMERARXUNPACK_NONE                  = 0;
+  OMX_CAMERARXUNPACK_6                     = 1;
+  OMX_CAMERARXUNPACK_7                     = 2;
+  OMX_CAMERARXUNPACK_8                     = 3;
+  OMX_CAMERARXUNPACK_10                    = 4;
+  OMX_CAMERARXUNPACK_12                    = 5;
+  OMX_CAMERARXUNPACK_14                    = 6;
+  OMX_CAMERARXUNPACK_16                    = 7;
+  OMX_CAMERARXUNPACK_MAX                   = $7FFFFFFF;
+
+  OMX_CAMERARXPACK_NONE                    = 0;
+  OMX_CAMERARXPACK_8                       = 1;
+  OMX_CAMERARXPACK_10                      = 2;
+  OMX_CAMERARXPACK_12                      = 3;
+  OMX_CAMERARXPACK_14                      = 4;
+  OMX_CAMERARXPACK_16                      = 5;
+  OMX_CAMERARXPACK_RAW10                   = 6;
+  OMX_CAMERARXPACK_RAW12                   = 7;
+  OMX_CAMERARXPACK_MAX                     = $7FFFFFFF;
+
+  OMX_BayerOrderRGGB                       = 0;
+  OMX_BayerOrderGBRG                       = 1;
+  OMX_BayerOrderBGGR                       = 2;
+  OMX_BayerOrderGRBG                       = 3;
+  OMX_BayerOrderMax                        = $7FFFFFFF;
+
   // OMX_INDEX_TYPE
   OMX_IndexComponentStartUnused            = $01000000;
   OMX_IndexParamPriorityMgmt               = $01000001;  (* reference: OMX_PRIORITYMGMTTYPE *)
@@ -1129,16 +781,6 @@ const
   OMX_IndexConfigTimePosition              = $0900000A;  (* reference: OMX_TIME_CONFIG_TIMESTAMPTYPE *)
   OMX_IndexConfigTimeSeekMode              = $0900000B;  (* reference: OMX_TIME_CONFIG_SEEKMODETYPE *)
 
-  OMX_IndexKhronosExtensions               = $6F000000;  (* Reserved region for introducing Khronos Standard Extensions *)
-  (* Vendor specific area *)
-
-  OMX_IndexVendorStartUnused               = $7F000000;
-  (* Vendor specific structures should be in the range of 0x7F000000
-     to 0x7FFFFFFE.  This range is not broken out by vendor, so
-     private indexes are not guaranteed unique and therefore should
-     only be sent to the appropriate component. *)
-
-  (* used for ilcs-top communication *)
   OMX_IndexParamMarkComparison             = $7F000001;  (* reference: OMX_PARAM_MARKCOMPARISONTYPE *)
   OMX_IndexParamPortSummary                = $7F000002;  (* reference: OMX_PARAM_PORTSUMMARYTYPE *)
   OMX_IndexParamTunnelStatus               = $7F000003;  (* reference: OMX_PARAM_TUNNELSTATUSTYPE *)
@@ -1427,49 +1069,1781 @@ const
   OMX_IndexParamOutputShift,                                (* reference: OMX_PARAM_S32TYPE *)
   OMX_IndexParamCcmShift,                                   (* reference: OMX_PARAM_S32TYPE *)
   OMX_IndexParamCustomCcm,                                  (* reference: OMX_PARAM_CUSTOMCCMTYPE *)
-  OMX_IndexMax = $7FFFFFFF;
-                   }
+  OMX_IndexMax = $7FFFFFFF;                }
 
+type
+  OMX_U8                                   = uint8;
+  POMX_U8                                  = ^OMX_U8;
+  PPOMX_U8                                 = ^POMX_U8;
+  OMX_S8                                   = Int8;
+  OMX_U16                                  = uint16;
+  OMX_S16                                  = Int16;
+  OMX_U32                                  = uint32;
+  POMX_U32                                 = ^OMX_U32;
+  OMX_S32                                  = integer;
+  OMX_U64                                  = uint64;
+  OMX_S64                                  = Int64;
+  OMX_BOOL                                 = LongBool;
+  OMX_PTR                                  = pointer;
+  OMX_STRING                               = PChar;
+
+  OMX_HANDLETYPE                           = pointer;
+  POMX_HANDLETYPE                          = ^OMX_HANDLETYPE;
+  OMX_NATIVE_DEVICETYPE                    = pointer;
+  OMX_NATIVE_WINDOWTYPE                    = pointer;
+  OMX_UUIDTYPE                             = array [0 .. 127] of byte;
+  POMX_UUIDTYPE                            = ^OMX_UUIDTYPE;
+
+  OMX_ENDIANTYPE                           = LongWord;
+  OMX_NUMERICALDATATYPE                    = LongWord;
+  OMX_PORTDOMAINTYPE                       = Longword;
+  OMX_ERRORTYPE                            = Longword;
+  OMX_EVENTTYPE                            = LongWord;
+  OMX_BUFFERSUPPLIERTYPE                   = LongWord;
+  OMX_DIRTYPE                              = LongWord;
+  OMX_COMMANDTYPE                          = LongWord;
+  OMX_STATETYPE                            = LongWord;
+  OMX_INDEXTYPE                            = LongWord;
+  OMX_AUDIO_CODINGTYPE                     = LongWord;
+  OMX_VIDEO_CODINGTYPE                     = LongWord;
+  OMX_COLOR_FORMATTYPE                     = LongWord;
+  OMX_OTHER_FORMATTYPE                     = LongWord;
+  OMX_IMAGE_CODINGTYPE                     = LongWord;
+  OMX_TIME_CLOCKSTATE                      = LongWord;
+  OMX_AUDIO_PCMMODETYPE                    = LongWord;
+  OMX_AUDIO_CHANNELTYPE                    = Longword;
+  OMX_DISPLAYTRANSFORMTYPE                 = LongWord;
+  OMX_DISPLAYMODETYPE                      = LongWord;
+  OMX_DISPLAYSETTYPE                       = LongWord;
+  OMX_SOURCETYPE                           = LongWord;
+  OMX_RESIZEMODETYPE                       = LongWord;
+  OMX_PLAYMODETYPE                         = LongWord;
+  OMX_DELIVERYFORMATTYPE                   = LongWord;
+  OMX_BUFFERADDRESSHANDLETYPE              = pointer;
+  OMX_AUDIOMONOTRACKOPERATIONSTYPE         = LongWord;
+  OMX_CAMERAIMAGEPOOLINPUTMODETYPE         = LongWord;
+  OMX_COMMONFLICKERCANCELTYPE              = LongWord;
+  OMX_REDEYEREMOVALTYPE                    = Longword;
+  OMX_FACEDETECTIONCONTROLTYPE             = LongWord;
+  OMX_FACEREGIONFLAGSTYPE                  = LongWord;
+  OMX_INTERLACETYPE                        = LongWord;
+  OMX_AFASSISTTYPE                         = LongWord;
+  OMX_PRIVACYINDICATORTYPE                 = LongWord;
+  OMX_CAMERAFLASHTYPE                      = LongWord;
+  OMX_CAMERAFLASHCONFIGSYNCTYPE            = LongWord;
+  OMX_BRCMPIXELVALUERANGETYPE              = LongWord;
+  OMX_CAMERADISABLEALGORITHMTYPE           = LongWord;
+  OMX_CONFIG_CAMERAUSECASE                 = LongWord;
+  OMX_CONFIG_CAMERAFEATURESSHUTTER         = LongWord;
+  OMX_FOCUSREGIONTYPE                      = LongWord;
+  OMX_DYNAMICRANGEEXPANSIONMODETYPE        = LongWord;
+  OMX_BRCMTHREADAFFINITYTYPE               = LongWord;
+  OMX_SCENEDETECTTYPE                      = LongWord;
+  OMX_INDEXEXTTYPE                         = LongWord;
+  OMX_NALUFORMATSTYPE                      = LongWord;
+  OMX_STATICBOXTYPE                        = LongWord;
+  OMX_CAMERACAPTUREMODETYPE                = LongWord;
+  OMX_BRCMDRMENCRYPTIONTYPE                = LongWord;
+  OMX_TIMESTAMPMODETYPE                    = LongWord;
+  OMX_COLORSPACETYPE                       = LongWord;
+  OMX_CAPTURESTATETYPE                     = LongWord;
+  OMX_BRCMSTEREOSCOPICMODETYPE             = LongWord;
+  OMX_CAMERAINTERFACETYPE                  = LongWord;
+  OMX_CAMERACLOCKINGMODETYPE               = LongWord;
+  OMX_CAMERARXDECODETYPE                   = LongWord;
+  OMX_CAMERARXENCODETYPE                   = LongWord;
+  OMX_CAMERARXUNPACKTYPE                   = LongWord;
+  OMX_CAMERARXPACKTYPE                     = LongWord;
+  OMX_BAYERORDERTYPE                       = LongWord;
+
+// forward declarations
+
+  POMX_VERSIONTYPE                         = ^OMX_VERSIONTYPE;
+  POMX_PORT_PARAM_TYPE                     = ^OMX_PORT_PARAM_TYPE;
+  POMX_TICKS                               = ^OMX_TICKS;
+  POMX_BUFFERHEADERTYPE                    = ^OMX_BUFFERHEADERTYPE;
+  PPOMX_BUFFERHEADERTYPE                   = ^POMX_BUFFERHEADERTYPE;
+  POMX_CONFIG_SCALEFACTORTYPE              = ^OMX_CONFIG_SCALEFACTORTYPE;
+  POMX_CALLBACKTYPE                        = ^OMX_CALLBACKTYPE;
+  POMX_TUNNELSETUPTYPE                     = ^OMX_TUNNELSETUPTYPE;
+  POMX_STATETYPE                           = ^OMX_STATETYPE;
+  POMX_INDEXTYPE                           = ^OMX_INDEXTYPE;
+  POMX_COMPONENTTYPE                       = ^OMX_COMPONENTTYPE;
+  POMX_AUDIO_PORTDEFINITIONTYPE            = ^OMX_AUDIO_PORTDEFINITIONTYPE;
+  POMX_VIDEO_CODINGTYPE                    = ^OMX_VIDEO_CODINGTYPE;
+  POMX_VIDEO_PORTDEFINITIONTYPE            = ^OMX_VIDEO_PORTDEFINITIONTYPE;
+  POMX_IMAGE_PORTDEFINITIONTYPE            = ^OMX_IMAGE_PORTDEFINITIONTYPE;
+  POMX_VIDEO_PARAM_PORTFORMATTYPE          = ^OMX_VIDEO_PARAM_PORTFORMATTYPE;
+  POMX_IMAGE_CODINGTYPE                    = ^OMX_IMAGE_CODINGTYPE;
+  POMX_OTHER_PORTDEFINITIONTYPE            = ^OMX_OTHER_PORTDEFINITIONTYPE;
+  POMX_BRCM_POOL_T                         = ^OMX_BRCM_POOL_T;
+  P_IL_FIFO_T                              = ^_IL_FIFO_T;
+
+
+
+  {$PACKRECORDS C}
+
+  OMX_MARKTYPE = record
+    hMarkTargetComponent : OMX_HANDLETYPE;               (* The component that will
+                                                            generate a mark event upon
+                                                            processing the mark. *)
+    pMarkData : OMX_PTR;                                 (* Application specific data associated with
+                                                            the mark sent on a mark event to disambiguate
+                                                            this mark from others. *)
+  end;
+
+  OMX_VERSIONTYPE = record
+    case boolean of
+      false :
+        (
+          nVersionMajor : OMX_U8;                        (* Major version accessor element *)
+          nVersionMinor : OMX_U8;                        (* Minor version accessor element *)
+          nRevision : OMX_U8;                            (* Revision version accessor element *)
+          nStep : OMX_U8;                                (* Step version accessor element *)
+        );
+      true :
+        (
+          nVersion : OMX_U32;                            (* 32 bit value to make accessing the
+                                                            version easily done in a single word
+                                                            size copy/compare operation *)
+        )
+  end;
+
+  OMX_PORT_PARAM_TYPE = record
+    nSize : OMX_U32;                                     (* size of the structure in bytes *)
+    nVersion : OMX_VERSIONTYPE;                          (* OMX specification version information *)
+    nPorts : OMX_U32;                                    (* The number of ports for this component *)
+    nStartPortNumber : OMX_U32;                          (* first port number for this type of port *)
+  end;
+
+  OMX_TICKS = record
+    nLowPart : OMX_U32;                                  (* low bits of the signed 64 bit tick value *)
+    nHighPart : OMX_U32;                                 (* high bits of the signed 64 bit tick value *)
+  end;
+
+  OMX_BUFFERHEADERTYPE = record
+    nSize : OMX_U32;                                     (* size of the structure in bytes *)
+    nVersion : OMX_VERSIONTYPE;                          (* OMX specification version information *)
+    pBuffer : POMX_U8;                                   (* Pointer to actual block of memory
+                                                            that is acting as the buffer *)
+    nAllocLen : OMX_U32;                                 (* size of the buffer allocated, in bytes *)
+    nFilledLen : OMX_U32;                                (* number of bytes currently in the buffer *)
+    nOffset : OMX_U32;                                   (* start offset of valid data in bytes from
+                                                            the start of the buffer *)
+    pAppPrivate : OMX_PTR;                               (* pointer to any data the application
+                                                            wants to associate with this buffer *)
+    pPlatformPrivate  : OMX_PTR;                         (* pointer to any data the platform
+                                                            wants to associate with this buffer *)
+    pInputPortPrivate : OMX_PTR;                         (* pointer to any data the input port
+                                                            wants to associate with this buffer *)
+    pOutputPortPrivate  : OMX_PTR;                       (* pointer to any data the output port
+                                                            wants to associate with this buffer *)
+    hMarkTargetComponent : OMX_HANDLETYPE;               (* The component that will generate a
+                                                            mark event upon processing this buffer. *)
+    pMarkData : OMX_PTR;                                 (* Application specific data associated with
+                                                            the mark sent on a mark event to disambiguate
+                                                            this mark from others. *)
+    nTickCount : OMX_U32;                                (* Optional entry that the component and
+                                                            application can update with a tick count
+                                                            when they access the component.  This
+                                                            value should be in microseconds.  Since
+                                                            this is a value relative to an arbitrary
+                                                            starting point, this value cannot be used
+                                                            to determine absolute time.  This is an
+                                                            optional entry and not all components
+                                                            will update it.*)
+    nTimeStamp : OMX_TICKS;                              (* Timestamp corresponding to the sample
+                                                            starting at the first logical sample
+                                                            boundary in the buffer. Timestamps of
+                                                            successive samples within the buffer may
+                                                            be inferred by adding the duration of the
+                                                            of the preceding buffer to the timestamp
+                                                            of the preceding buffer.*)
+    nFlags : OMX_U32;                                    (* buffer specific flags *)
+    nOutputPortIndex : OMX_U32;                          (* The index of the output port (if any) using
+                                                            this buffer *)
+    nInputPortIndex : OMX_U32;                           (* The index of the input port (if any) using
+                                                            this buffer *)
+  end;
+
+  OMX_CONFIG_SCALEFACTORTYPE = record
+    nSize: OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    xWidth : OMX_S32;
+    xHeight : OMX_S32;
+  end;
+
+  TEventHandler = function (hComponent : OMX_HANDLETYPE;
+                            pAppData : OMX_PTR;
+                            eEvent : OMX_EVENTTYPE;
+                            nData1 : OMX_U32;
+                            nData2 : OMX_U32;
+                            pEventData : OMX_PTR) : OMX_ERRORTYPE; cdecl;
+
+  TFillBufferDone = function (hComponent : OMX_HANDLETYPE;
+                              pAppData : OMX_PTR;
+                              pBuffer : POMX_BUFFERHEADERTYPE) : OMX_ERRORTYPE; cdecl;
+
+  TEmptyBufferDone = function (hComponent : OMX_HANDLETYPE;
+                               pAppData : OMX_PTR;
+                               pBuffer : POMX_BUFFERHEADERTYPE) : OMX_ERRORTYPE; cdecl;
+
+
+  OMX_CALLBACKTYPE = record
+    EventHandler : TEventHandler;                        (* The EventHandler method is used to notify the application when an
+                                                            event of interest occurs.  Events are defined in the OMX_EVENTTYPE
+                                                            enumeration.  Please see that enumeration for details of what will
+                                                            be returned for each type of event. Callbacks should not return
+                                                            an error to the component, so if an error occurs, the application
+                                                            shall handle it internally.  This is a blocking call.
+
+                                                            The application should return from this call within 5 msec to avoid
+                                                            blocking the component for an excessively long period of time.
+
+                                                            @param hComponent
+                                                                handle of the component to access.  This is the component
+                                                                handle returned by the call to the GetHandle function.
+                                                            @param pAppData
+                                                                pointer to an application defined value that was provided in the
+                                                                pAppData parameter to the OMX_GetHandle method for the component.
+                                                                This application defined value is provided so that the application
+                                                                can have a component specific context when receiving the callback.
+                                                            @param eEvent
+                                                                Event that the component wants to notify the application about.
+                                                            @param nData1
+                                                                nData will be the OMX_ERRORTYPE for an error event and will be
+                                                                an OMX_COMMANDTYPE for a command complete event and OMX_INDEXTYPE for a OMX_PortSettingsChanged event.
+                                                             @param nData2
+                                                                nData2 will hold further information related to the event. Can be OMX_STATETYPE for
+                                                                a OMX_CommandStateSet command or port index for a OMX_PortSettingsChanged event.
+                                                                Default value is 0 if not used. )
+                                                            @param pEventData
+                                                                Pointer to additional event-specific data (see spec for meaning).   *)
+    EmptyBufferDone : TEmptyBufferDone;                  (* The EmptyBufferDone method is used to return emptied buffers from an
+                                                            input port back to the application for reuse.  This is a blocking call
+                                                            so the application should not attempt to refill the buffers during this
+                                                            call, but should queue them and refill them in another thread.  There
+                                                            is no error return, so the application shall handle any errors generated
+                                                            internally.
+
+                                                            The application should return from this call within 5 msec.
+
+                                                            @param hComponent
+                                                                handle of the component to access.  This is the component
+                                                                handle returned by the call to the GetHandle function.
+                                                            @param pAppData
+                                                                pointer to an application defined value that was provided in the
+                                                                pAppData parameter to the OMX_GetHandle method for the component.
+                                                                This application defined value is provided so that the application
+                                                                can have a component specific context when receiving the callback.
+                                                            @param pBuffer
+                                                                pointer to an OMX_BUFFERHEADERTYPE structure allocated with UseBuffer
+                                                                or AllocateBuffer indicating the buffer that was emptied.   *)
+
+    FillBufferDone : TFillBufferDone;                    (* The FillBufferDone method is used to return filled buffers from an
+                                                            output port back to the application for emptying and then reuse.
+                                                            This is a blocking call so the application should not attempt to
+                                                            empty the buffers during this call, but should queue the buffers
+                                                            and empty them in another thread.  There is no error return, so
+                                                            the application shall handle any errors generated internally.  The
+                                                            application shall also update the buffer header to indicate the
+                                                            number of bytes placed into the buffer.
+
+                                                            The application should return from this call within 5 msec.
+
+                                                            @param hComponent
+                                                                handle of the component to access.  This is the component
+                                                                handle returned by the call to the GetHandle function.
+                                                            @param pAppData
+                                                                pointer to an application defined value that was provided in the
+                                                                pAppData parameter to the OMX_GetHandle method for the component.
+                                                                This application defined value is provided so that the application
+                                                                can have a component specific context when receiving the callback.
+                                                            @param pBuffer
+                                                                pointer to an OMX_BUFFERHEADERTYPE structure allocated with UseBuffer
+                                                                or AllocateBuffer indicating the buffer that was filled. *)
+  end;
+
+  OMX_TUNNELSETUPTYPE = record
+    nTunnelFlags : OMX_U32;                              (* bit flags for tunneling *)
+    eSupplier : OMX_BUFFERSUPPLIERTYPE;                  (* supplier preference *)
+  end;
+
+  TGetComponentVersion = function (hComponent  : OMX_HANDLETYPE;
+                                   pComponentName : OMX_STRING;
+                                   pComponentVersion : POMX_VERSIONTYPE;
+                                   pSpecVersion : POMX_VERSIONTYPE;
+                                   pComponentUUID : POMX_UUIDTYPE) : OMX_ERRORTYPE; cdecl;
+
+  TSendCommand = function (hComponent : OMX_HANDLETYPE;
+                           Cmd : OMX_COMMANDTYPE;
+                           nParam1 : OMX_U32;
+                           pCmdData : OMX_PTR) : OMX_ERRORTYPE; cdecl;
+
+  TGetParameter = function (hComponent : OMX_HANDLETYPE;
+                            nParamIndex : OMX_INDEXTYPE;
+                            pComponentParameterStructure : OMX_PTR) : OMX_ERRORTYPE; cdecl;
+
+  TSetParameter = function (hComponent : OMX_HANDLETYPE;
+                            nIndex : OMX_INDEXTYPE;
+                            pComponentParameterStructure : OMX_PTR) : OMX_ERRORTYPE; cdecl;
+
+  TGetConfig = function (hComponent : OMX_HANDLETYPE;
+                         nIndex : OMX_INDEXTYPE;
+                         pComponentConfigStructure : OMX_PTR) : OMX_ERRORTYPE; cdecl;
+
+  TSetConfig = function (hComponent : OMX_HANDLETYPE;
+                         nIndex : OMX_INDEXTYPE;
+                         pComponentConfigStructure : OMX_PTR) : OMX_ERRORTYPE; cdecl;
+
+  TGetExtensionIndex = function (hComponent : OMX_HANDLETYPE;
+                                 cParameterName : OMX_STRING;
+                                 pIndexType : POMX_INDEXTYPE) : OMX_ERRORTYPE; cdecl;
+
+  TGetState = function (hComponent : OMX_HANDLETYPE;
+                        pState : POMX_STATETYPE) : OMX_ERRORTYPE; cdecl;
+
+  TComponentTunnelRequest = function (hComp : OMX_HANDLETYPE;
+                                      nPort : OMX_U32;
+                                      hTunneledComp : OMX_HANDLETYPE;
+                                      nTunneledPort : OMX_U32;
+                                      pTunnelSetup : POMX_TUNNELSETUPTYPE) : OMX_ERRORTYPE; cdecl;
+
+  TUseBuffer = function (hComponent : OMX_HANDLETYPE;
+                         ppBufferHdr : PPOMX_BUFFERHEADERTYPE;
+                         nPortIndex : OMX_U32;
+                         pAppPrivate : OMX_PTR;
+                         nSizeBytes : OMX_U32;
+                         pBuffer : POMX_U8) : OMX_ERRORTYPE; cdecl;
+
+  TAllocateBuffer = function (hComponent : OMX_HANDLETYPE;
+                              ppBuffer : PPOMX_BUFFERHEADERTYPE;
+                              nPortIndex : OMX_U32;
+                              pAppPrivate : OMX_PTR;
+                              nSizeBytes : OMX_U32) : OMX_ERRORTYPE; cdecl;
+
+  TFreeBuffer = function (hComponent : OMX_HANDLETYPE;
+                          nPortIndex : OMX_U32;
+                          pBuffer : POMX_BUFFERHEADERTYPE) : OMX_ERRORTYPE; cdecl;
+
+  TEmptyThisBuffer = function (hComponent : OMX_HANDLETYPE;
+                               pBuffer : POMX_BUFFERHEADERTYPE) : OMX_ERRORTYPE; cdecl;
+
+  TFillThisBuffer = function (hComponent : OMX_HANDLETYPE;
+                              pBuffer : POMX_BUFFERHEADERTYPE) : OMX_ERRORTYPE; cdecl;
+
+  TSetCallbacks = function (hComponent : OMX_HANDLETYPE;
+                            pCallbacks : POMX_CALLBACKTYPE;
+                            pAppData : OMX_PTR) : OMX_ERRORTYPE; cdecl;
+
+  TComponentDeInit = function (hComponent : OMX_HANDLETYPE) : OMX_ERRORTYPE; cdecl;
+
+  TUseEGLImage = function (hComponent : OMX_HANDLETYPE;
+                           ppBufferHdr : PPOMX_BUFFERHEADERTYPE;
+                           nPortIndex : OMX_U32;
+                           pAppPrivate : OMX_PTR;
+                           eglImage : Pointer) : OMX_ERRORTYPE; cdecl;
+
+  TComponentRoleEnum = function (hComponent : OMX_HANDLETYPE;
+                    		         cRole : POMX_U8;
+                                 nIndex : OMX_U32) : OMX_ERRORTYPE; cdecl;
+
+  OMX_COMPONENTTYPE = record
+    nSize : OMX_U32;                                     (* The size of this structure, in bytes.  It is the responsibility
+                                                            of the allocator of this structure to fill in this value.  Since
+                                                            this structure is allocated by the GetHandle function, this
+                                                            function will fill in this value. *)
+    nVersion : OMX_VERSIONTYPE;                          (* nVersion is the version of the OMX specification that the structure
+                                                            is built against.  It is the responsibility of the creator of this
+                                                            structure to initialize this value and every user of this structure
+                                                            should verify that it knows how to use the exact version of
+                                                            this structure found herein. *)
+    pComponentPrivate : OMX_PTR;                         (* pComponentPrivate is a pointer to the component private data area.
+                                                            This member is allocated and initialized by the component when the
+                                                            component is first loaded.  The application should not access this
+                                                            data area. *)
+    pApplicationPrivate : OMX_PTR;                       (* pApplicationPrivate is a pointer that is a parameter to the
+                                                            OMX_GetHandle method, and contains an application private value
+                                                            provided by the IL client.  This application private data is
+                                                            returned to the IL Client by OMX in all callbacks *)
+    GetComponentVersion : TGetComponentVersion;          (* refer to OMX_GetComponentVersion in OMX_core.h or the OMX IL
+                                                            specification for details on the GetComponentVersion method. *)
+    SendCommand : TSendCommand;                          (* refer to OMX_SendCommand in OMX_core.h or the OMX IL
+                                                            specification for details on the SendCommand method. *)
+    GetParameter : TGetParameter;                        (* refer to OMX_GetParameter in OMX_core.h or the OMX IL
+                                                            specification for details on the GetParameter method. *)
+    SetParameter : TSetParameter;                        (* refer to OMX_SetParameter in OMX_core.h or the OMX IL
+                                                            specification for details on the SetParameter method. *)
+    GetConfig : TGetConfig;                              (* refer to OMX_GetConfig in OMX_core.h or the OMX IL
+                                                            specification for details on the GetConfig method. *)
+    SetConfig : TSetConfig;                              (* refer to OMX_SetConfig in OMX_core.h or the OMX IL
+                                                            specification for details on the SetConfig method.*)
+    GetExtensionIndex : TGetExtensionIndex;              (* refer to OMX_GetExtensionIndex in OMX_core.h or the OMX IL
+                                                            specification for details on the GetExtensionIndex method. *)
+    GetState : TGetState;                                (* refer to OMX_GetState in OMX_core.h or the OMX IL
+                                                            specification for details on the GetState method. *)
+    ComponentTunnelRequest : TComponentTunnelRequest;    (* The ComponentTunnelRequest method will interact with another OMX
+                                                            component to determine if tunneling is possible and to setup the
+                                                            tunneling.  The return codes for this method can be used to
+                                                            determine if tunneling is not possible, or if tunneling is not
+                                                            supported.
+
+                                                            Base profile components (i.e. non-interop) do not support this
+                                                            method and should return OMX_ErrorNotImplemented
+
+                                                            The interop profile component MUST support tunneling to another
+                                                            interop profile component with a compatible port parameters.
+                                                            A component may also support proprietary communication.
+
+                                                            If proprietary communication is supported the negotiation of
+                                                            proprietary communication is done outside of OMX in a vendor
+                                                            specific way. It is only required that the proper result be
+                                                            returned and the details of how the setup is done is left
+                                                            to the component implementation.
+
+                                                            When this method is invoked when nPort in an output port, the
+                                                            component will:
+                                                            1.  Populate the pTunnelSetup structure with the output port's
+                                                                requirements and constraints for the tunnel.
+
+                                                            When this method is invoked when nPort in an input port, the
+                                                            component will:
+                                                            1.  Query the necessary parameters from the output port to
+                                                                determine if the ports are compatible for tunneling
+                                                            2.  If the ports are compatible, the component should store
+                                                                the tunnel step provided by the output port
+                                                            3.  Determine which port (either input or output) is the buffer
+                                                                supplier, and call OMX_SetParameter on the output port to
+                                                                indicate this selection.
+
+                                                            The component will return from this call within 5 msec.
+
+                                                            @param [in] hComp
+                                                                Handle of the component to be accessed.  This is the component
+                                                                handle returned by the call to the OMX_GetHandle method.
+                                                            @param [in] nPort
+                                                                nPort is used to select the port on the component to be used
+                                                                for tunneling.
+                                                            @param [in] hTunneledComp
+                                                                Handle of the component to tunnel with.  This is the component
+                                                                handle returned by the call to the OMX_GetHandle method.  When
+                                                                this parameter is 0x0 the component should setup the port for
+                                                                communication with the application / IL Client.
+                                                            @param [in] nPortOutput
+                                                                nPortOutput is used indicate the port the component should
+                                                                tunnel with.
+                                                            @param [in] pTunnelSetup
+                                                                Pointer to the tunnel setup structure.  When nPort is an output port
+                                                                the component should populate the fields of this structure.  When
+                                                                When nPort is an input port the component should review the setup
+                                                                provided by the component with the output port.
+                                                            @return OMX_ERRORTYPE
+                                                                If the command successfully executes, the return code will be
+                                                                OMX_ErrorNone.  Otherwise the appropriate OMX error will be returned.  *)
+    UseBuffer : TUseBuffer;                              (* refer to OMX_UseBuffer in OMX_core.h or the OMX IL
+                                                            specification for details on the UseBuffer method.  *)
+    AllocateBuffer : TAllocateBuffer;                    (* refer to OMX_AllocateBuffer in OMX_core.h or the OMX IL
+                                                            specification for details on the AllocateBuffer method. *)
+    FreeBuffer : TFreeBuffer;                            (* refer to OMX_FreeBuffer in OMX_core.h or the OMX IL
+                                                            specification for details on the FreeBuffer method. *)
+    EmptyThisBuffer : TEmptyThisBuffer;                  (* refer to OMX_EmptyThisBuffer in OMX_core.h or the OMX IL
+                                                            specification for details on the EmptyThisBuffer method. *)
+    FillThisBuffer : TFillThisBuffer;                    (* refer to OMX_FillThisBuffer in OMX_core.h or the OMX IL
+                                                            specification for details on the FillThisBuffer method. *)
+    SetCallbacks : TSetCallbacks;                        (* The SetCallbacks method is used by the core to specify the callback
+                                                            structure from the application to the component.  This is a blocking
+                                                            call.  The component will return from this call within 5 msec.
+
+                                                         @param [in] hComponent
+                                                             Handle of the component to be accessed.  This is the component
+                                                             handle returned by the call to the GetHandle function.
+                                                         @param [in] pCallbacks
+                                                             pointer to an OMX_CALLBACKTYPE structure used to provide the
+                                                             callback information to the component
+                                                         @param [in] pAppData
+                                                             pointer to an application defined value.  It is anticipated that
+                                                             the application will pass a pointer to a data structure or a "this
+                                                             pointer" in this area to allow the callback (in the application)
+                                                             to determine the context of the call
+                                                         @return OMX_ERRORTYPE
+                                                             If the command successfully executes, the return code will be
+                                                             OMX_ErrorNone.  Otherwise the appropriate OMX error will be returned. *)
+    ComponentDeInit : TComponentDeInit;                  (* ComponentDeInit method is used to deinitialize the component
+                                                            providing a means to free any resources allocated at component
+                                                            initialization.  NOTE:  After this call the component handle is
+                                                            not valid for further use.
+                                                         @param [in] hComponent
+                                                             Handle of the component to be accessed.  This is the component
+                                                             handle returned by the call to the GetHandle function.
+                                                         @return OMX_ERRORTYPE
+                                                             If the command successfully executes, the return code will be
+                                                             OMX_ErrorNone.  Otherwise the appropriate OMX error will be returned.   *)
+    UseEGLImage : TUseEGLImage;
+    ComponentRoleEnum : TComponentRoleEnum;
+  end;
+
+  OMX_AUDIO_PORTDEFINITIONTYPE = record
+    cMIMEType : OMX_STRING;                              (* MIME type of data for the port *)
+    pNativeRender : OMX_NATIVE_DEVICETYPE;               (* platform specific reference
+                                                            for an output device,
+                                                            otherwise this field is 0 *)
+    bFlagErrorConcealment : OMX_BOOL;                    (* Turns on error concealment if it is
+                                                            supported by the OMX component *)
+    eEncoding : OMX_AUDIO_CODINGTYPE;                    (* Type of data expected for this
+                                                            port (e.g. PCM, AMR, MP3, etc) *)
+  end;
+
+  OMX_VIDEO_PORTDEFINITIONTYPE = record
+    cMIMEType : OMX_STRING;
+    pNativeRender : OMX_NATIVE_DEVICETYPE;
+    nFrameWidth : OMX_U32;
+    nFrameHeight : OMX_U32;
+    nStride : OMX_S32;
+    nSliceHeight : OMX_U32;
+    nBitrate : OMX_U32;
+    xFramerate : OMX_U32;
+    bFlagErrorConcealment : OMX_BOOL;
+    eCompressionFormat : OMX_VIDEO_CODINGTYPE;
+    eColorFormat : OMX_COLOR_FORMATTYPE;
+    pNativeWindow : OMX_NATIVE_WINDOWTYPE;
+  end;
+
+  OMX_VIDEO_PARAM_PORTFORMATTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    nIndex : OMX_U32;
+    eCompressionFormat : OMX_VIDEO_CODINGTYPE;
+    eColorFormat : OMX_COLOR_FORMATTYPE;
+    xFramerate : OMX_U32;
+  end;
+
+  OMX_IMAGE_PORTDEFINITIONTYPE = record
+    cMIMEType : OMX_STRING;
+    pNativeRender : OMX_NATIVE_DEVICETYPE;
+    nFrameWidth : OMX_U32;
+    nFrameHeight : OMX_U32;
+    nStride : OMX_S32;
+    nSliceHeight : OMX_U32;
+    bFlagErrorConcealment : OMX_BOOL;
+    eCompressionFormat : OMX_IMAGE_CODINGTYPE;
+    eColorFormat : OMX_COLOR_FORMATTYPE;
+    pNativeWindow : OMX_NATIVE_WINDOWTYPE;
+  end;
+
+  OMX_TIME_CONFIG_CLOCKSTATETYPE = record
+    nSize : OMX_U32;                                     (* size of the structure in bytes *)
+    nVersion : OMX_VERSIONTYPE;                          (* OMX specification version information *)
+    eState : OMX_TIME_CLOCKSTATE;                        (* State of the media time. *)
+    nStartTime : OMX_TICKS;                              (* Start time of the media time. *)
+    nOffset : OMX_TICKS;                                 (* Time to offset the media time by
+                                                            (e.g. preroll). Media time will be
+                                                            reported to be nOffset ticks earlier. *)
+    nWaitMask : OMX_U32;                                 (* Mask of OMX_CLOCKPORT values. *)
+  end;
+
+  OMX_OTHER_PORTDEFINITIONTYPE = record
+    eFormat : OMX_OTHER_FORMATTYPE;                      (* Type of data expected for this channel *)
+  end;
+
+  OMX_FORMAT = record
+    case integer of
+     1 : (audio : OMX_AUDIO_PORTDEFINITIONTYPE);
+     2 : (video : OMX_VIDEO_PORTDEFINITIONTYPE);
+     3 : (image : OMX_IMAGE_PORTDEFINITIONTYPE);
+     4 : (other : OMX_OTHER_PORTDEFINITIONTYPE);
+  end;
+
+  OMX_PARAM_PORTDEFINITIONTYPE = record
+    nSize : OMX_U32;                                     (* Size of the structure in bytes *)
+    nVersion : OMX_VERSIONTYPE;                          (* OMX specification version information *)
+    nPortIndex : OMX_U32;                                (* Port number the structure applies to *)
+    eDir : OMX_DIRTYPE;                                  (* Direction (input or output) of this port *)
+    nBufferCountActual : OMX_U32;                        (* The actual number of buffers allocated on this port *)
+    nBufferCountMin : OMX_U32;                           (* The minimum number of buffers this port requires *)
+    nBufferSize : OMX_U32;                               (* Size, in bytes, for buffers to be used for this channel *)
+    bEnabled : OMX_BOOL;                                 (* Ports default to enabled and are enabled/disabled by
+                                                            OMX_CommandPortEnable/OMX_CommandPortDisable.
+                                                            When disabled a port is unpopulated. A disabled port
+                                                            is not populated with buffers on a transition to IDLE. *)
+    bPopulated : OMX_BOOL;                               (* Port is populated with all of its buffers as indicated by
+                                                            nBufferCountActual. A disabled port is always unpopulated.
+                                                            An enabled port is populated on a transition to OMX_StateIdle
+                                                            and unpopulated on a transition to loaded. *)
+    eDomain : OMX_PORTDOMAINTYPE;                        (* Domain of the port. Determines the contents of metadata below. *)
+    format : OMX_FORMAT;
+    bBuffersContiguous : OMX_BOOL;
+    nBufferAlignment : OMX_U32;
+  end;
+
+  OMX_AUDIO_PARAM_PCMMODETYPE = record
+    nSize : OMX_U32;                                     (* Size of this structure, in Bytes *)
+    nVersion : OMX_VERSIONTYPE;                          (* OMX specification version information *)
+    nPortIndex : OMX_U32;                                (* port that this structure applies to *)
+    nChannels : OMX_U32;                                 (* Number of channels (e.g. 2 for stereo) *)
+    eNumData : OMX_NUMERICALDATATYPE;                    (* indicates PCM data as signed or unsigned *)
+    eEndian : OMX_ENDIANTYPE;                            (* indicates PCM data as little or big endian *)
+    bInterleaved : OMX_BOOL;                             (* True for normal interleaved data; false for
+                                                            non-interleaved data (e.g. block data) *)
+    nBitPerSample : OMX_U32;                             (* Bit per sample *)
+    nSamplingRate : OMX_U32;                             (* Sampling rate of the source data.  Use 0 for
+                                                            variable or unknown sampling rate. *)
+    ePCMMode : OMX_AUDIO_PCMMODETYPE;                    (* PCM mode enumeration *)
+    eChannelMapping : array [0 .. OMX_AUDIO_MAXCHANNELS - 1] of OMX_AUDIO_CHANNELTYPE; (* Slot i contains channel defined by eChannelMap[i] *)
+  end;
+
+  OMX_BUFFERFRAGMENTTYPE = record
+    pBuffer : OMX_PTR;
+    nLen : OMX_U32;
+  end;
+
+  OMX_PARAM_IJGSCALINGTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    bEnabled : OMX_BOOL;
+  end;
+
+  OMX_DISPLAYRECTTYPE = record
+    x_offset : OMX_S16;
+    y_offset : OMX_S16;
+    width : OMX_S16;
+    height : OMX_S16;
+  end;
+
+  OMX_CONFIG_DISPLAYREGIONTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    set_ : OMX_DISPLAYSETTYPE;
+    num : OMX_U32;
+    fullscreen : OMX_BOOL;
+    transform : OMX_DISPLAYTRANSFORMTYPE;
+    dest_rect : OMX_DISPLAYRECTTYPE;
+    src_rect : OMX_DISPLAYRECTTYPE;
+    noaspect : OMX_BOOL;
+    mode : OMX_DISPLAYMODETYPE;
+    pixel_x : OMX_U32;
+    pixel_y : OMX_U32;
+    layer : OMX_S32;
+    copyprotect_required : OMX_BOOL;
+    alpha : OMX_U32;
+    wfc_context_width : OMX_U32;
+    wfc_context_height : OMX_U32;
+  end;
+
+  OMX_PARAM_SOURCETYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    eType : OMX_SOURCETYPE;
+    nParam : OMX_U32;
+    nFrameCount : OMX_U32;
+    xFrameRate : OMX_U32;
+  end;
+
+  OMX_PARAM_SOURCESEEDTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    nData : array [0 .. 15] of OMX_U16;
+  end;
+
+  OMX_PARAM_RESIZETYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    eMode : OMX_RESIZEMODETYPE;
+    nMaxWidth : OMX_U32;
+    nMaxHeight : OMX_U32;
+    nMaxBytes : OMX_U32;
+    bPreserveAspectRatio : OMX_BOOL;
+    bAllowUpscaling : OMX_BOOL;
+  end;
+
+  OMX_PARAM_TESTINTERFACETYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    bTest : OMX_BOOL;
+    bSetExtra : OMX_BOOL;
+    nExtra : OMX_U32;
+    bSetError : OMX_BOOL;
+    stateError : array [0 .. 1] of OMX_BOOL;
+  end;
+
+  OMX_CONFIG_VISUALISATIONTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    name : array [0 .. 15] of OMX_U8;
+    _property : array [0 .. 63] of OMX_U8;
+  end;
+
+  OMX_CONFIG_BRCMAUDIODESTINATIONTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    sName : array [0 .. 15] of OMX_U8;
+  end;
+
+  OMX_CONFIG_BRCMAUDIOSOURCETYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    sName : array [0 .. 15] of OMX_U8;
+  end;
+
+
+  OMX_CONFIG_BRCMAUDIODOWNMIXCOEFFICIENTS = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    coeff : array [0 .. 15] of OMX_U32;
+  end;
+
+  OMX_CONFIG_BRCMAUDIODOWNMIXCOEFFICIENTS8x8 = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    coeff : array [0 .. 63] of OMX_U32;
+  end;
+
+  OMX_CONFIG_BRCMAUDIOMAXSAMPLE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    nMaxSample : OMX_U32;
+    nTimeStamp : OMX_TICKS;
+  end;
+
+  OMX_CONFIG_PLAYMODETYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    eMode : OMX_PLAYMODETYPE;
+  end;
+
+  OMX_PARAM_DELIVERYFORMATTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    eFormat : OMX_DELIVERYFORMATTYPE;
+  end;
+
+  OMX_PARAM_CODECCONFIGTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    bCodecConfigIsComplete : OMX_U32;
+    nData : array [0 .. 0] of OMX_U8;
+  end;
+
+  OMX_PARAM_STILLSFUNCTIONTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    bBuffer : OMX_BOOL;
+    pOpenFunc : function : OMX_PTR; cdecl;
+    pCloseFunc : function : OMX_PTR; cdecl;
+    pReadFunc : function : OMX_PTR; cdecl;
+    pSeekFunc : function : OMX_PTR; cdecl;
+    pWriteFunc : function : OMX_PTR; cdecl;
+  end;
+
+  OMX_PARAM_BUFFERADDRESSTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    nAllocLen : OMX_U32;
+    handle : OMX_BUFFERADDRESSHANDLETYPE;
+  end;
+
+  OMX_PARAM_TUNNELSETUPTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    sSetup : OMX_TUNNELSETUPTYPE;
+  end;
+
+  OMX_PARAM_BRCMPORTEGLTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    bPortIsEGL : OMX_BOOL;
+  end;
+ (* to be fixed
+  OMX_CONFIG_IMAGEFILTERPARAMSTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    eImageFilter : OMX_IMAGEFILTERTYPE;
+    nNumParams : OMX_U32;
+    nParams : array [0 .. OMX_CONFIG_IMAGEFILTERPARAMS_MAXPARAMS - 1] of OMX_U32;
+  end;         *)
+
+  OMX_CONFIG_TRANSITIONCONTROLTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    nPosStart : OMX_U32;
+    nPosEnd : OMX_U32;
+    nPosIncrement : OMX_S32;
+    nFrameIncrement : OMX_TICKS;
+    bSwapInputs : OMX_BOOL;
+    name : array [0 .. 15] of OMX_U8;
+    _property : array [0 .. 63] of OMX_U8;
+  end;
+
+  OMX_CONFIG_AUDIOMONOTRACKCONTROLTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    eMode : OMX_AUDIOMONOTRACKOPERATIONSTYPE;
+  end;
+
+  OMX_PARAM_CAMERAIMAGEPOOLTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nNumHiResVideoFrames : OMX_U32;
+    nHiResVideoWidth : OMX_U32;
+    nHiResVideoHeight : OMX_U32;
+    eHiResVideoType : OMX_COLOR_FORMATTYPE;
+    nNumHiResStillsFrames : OMX_U32;
+    nHiResStillsWidth : OMX_U32;
+    nHiResStillsHeight : OMX_U32;
+    eHiResStillsType : OMX_COLOR_FORMATTYPE;
+    nNumLoResFrames : OMX_U32;
+    nLoResWidth : OMX_U32;
+    nLoResHeight : OMX_U32;
+    eLoResType : OMX_COLOR_FORMATTYPE;
+    nNumSnapshotFrames : OMX_U32;
+    eSnapshotType : OMX_COLOR_FORMATTYPE;
+    eInputPoolMode : OMX_CAMERAIMAGEPOOLINPUTMODETYPE;
+    nNumInputVideoFrames : OMX_U32;
+    nInputVideoWidth : OMX_U32;
+    nInputVideoHeight : OMX_U32;
+    eInputVideoType : OMX_COLOR_FORMATTYPE;
+    nNumInputStillsFrames : OMX_U32;
+    nInputStillsWidth : OMX_U32;
+    nInputStillsHeight : OMX_U32;
+    eInputStillsType : OMX_COLOR_FORMATTYPE;
+  end;
+
+  OMX_PARAM_IMAGEPOOLSIZETYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    width : OMX_U32;
+    height : OMX_U32;
+    num_pages : OMX_U32;
+  end;
+
+  OMX_BRCM_POOL_T = record
+    {undefined structure}
+  end;
+
+  OMX_PARAM_IMAGEPOOLEXTERNALTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    image_pool : POMX_BRCM_POOL_T;
+    image_pool2 : POMX_BRCM_POOL_T;
+    image_pool3 : POMX_BRCM_POOL_T;
+    image_pool4 : POMX_BRCM_POOL_T;
+    image_pool5 : POMX_BRCM_POOL_T;
+  end;
+
+  _IL_FIFO_T = record
+    {undefined structure}
+  end;
+
+  OMX_PARAM_RUTILFIFOINFOTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    pILFifo : P_IL_FIFO_T;
+  end;
+
+  OMX_PARAM_ILFIFOCONFIG = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    nDataSize : OMX_U32;
+    nHeaderCount : OMX_U32;
+  end;
+
+  OMX_CONFIG_CAMERASENSORMODETYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    nModeIndex : OMX_U32;
+    nNumModes : OMX_U32;
+    nWidth : OMX_U32;
+    nHeight : OMX_U32;
+    nPaddingRight : OMX_U32;
+    nPaddingDown : OMX_U32;
+    eColorFormat : OMX_COLOR_FORMATTYPE;
+    nFrameRateMax : OMX_U32;
+    nFrameRateMin : OMX_U32;
+  end;
+
+  OMX_BRCMBUFFERSTATSTYPE = record
+    nOrdinal : OMX_U32;
+    nTimeStamp : OMX_TICKS;
+    nFilledLen : OMX_U32;
+    nFlags : OMX_U32;
+    crc : record
+      case longint of
+        0 : ( nU32 : OMX_U32 );
+        1 : ( image : record
+            nYpart : OMX_U32;
+            nUVpart : OMX_U32;
+          end );
+      end;
+  end;
+
+  OMX_CONFIG_BRCMPORTBUFFERSTATSTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    nCount : OMX_U32;
+    sData : array [0 .. 0] of OMX_BRCMBUFFERSTATSTYPE;
+  end;
+
+  OMX_CONFIG_BRCMPORTSTATSTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    nImageCount : OMX_U32;
+    nBufferCount : OMX_U32;
+    nFrameCount : OMX_U32;
+    nFrameSkips : OMX_U32;
+    nDiscards : OMX_U32;
+    nEOS : OMX_U32;
+    nMaxFrameSize : OMX_U32;
+    nByteCount : OMX_TICKS;
+    nMaxTimeDelta : OMX_TICKS;
+    nCorruptMBs : OMX_U32;
+  end;
+
+  OMX_CONFIG_BRCMCAMERASTATSTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nOutFrameCount : OMX_U32;
+    nDroppedFrameCount : OMX_U32;
+  end;
+
+  OMX_BRCM_PERFSTATS = record
+    count : array [0 .. OMX_BRCM_MAXIOPERFBANDS - 1] of OMX_U32;
+    num : array [0 .. OMX_BRCM_MAXIOPERFBANDS - 1] of OMX_U32;
+  end;
+
+  OMX_CONFIG_BRCMIOPERFSTATSTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    bEnabled : OMX_BOOL;
+    write : OMX_BRCM_PERFSTATS;
+    flush : OMX_BRCM_PERFSTATS;
+    wait : OMX_BRCM_PERFSTATS;
+  end;
+
+  OMX_CONFIG_SHARPNESSTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    nSharpness : OMX_S32;
+  end;
+
+  OMX_CONFIG_FLICKERCANCELTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    eFlickerCancel : OMX_COMMONFLICKERCANCELTYPE;
+  end;
+
+  OMX_CONFIG_REDEYEREMOVALTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    eMode : OMX_REDEYEREMOVALTYPE;
+  end;
+
+  OMX_CONFIG_FACEDETECTIONCONTROLTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    eMode : OMX_FACEDETECTIONCONTROLTYPE;
+    nFrames : OMX_U32;
+    nMaxRegions : OMX_U32;
+    nQuality : OMX_U32;
+  end;
+
+  OMX_FACEREGIONTYPE = record
+    nLeft : OMX_S16;
+    nTop : OMX_S16;
+    nWidth : OMX_U16;
+    nHeight : OMX_U16;
+    nFlags : OMX_FACEREGIONFLAGSTYPE;
+    nFaceRecognitionId : record
+      nLowPart : OMX_U32;
+      nHighPart : OMX_U32;
+    end;
+  end;
+
+  OMX_CONFIG_FACEDETECTIONREGIONTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    nIndex : OMX_U32;
+    nDetectedRegions : OMX_U32;
+    nValidRegions : OMX_S32;
+    nImageWidth : OMX_U32;
+    nImageHeight : OMX_U32;
+    sRegion : array [0 .. 0] of OMX_FACEREGIONTYPE;
+  end;
+
+  OMX_CONFIG_INTERLACETYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    eMode : OMX_INTERLACETYPE;
+    bRepeatFirstField : OMX_BOOL;
+  end;
+
+  OMX_PARAM_CAMERAISPTUNERTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    tuner_name : array [0 .. 63] of OMX_U8;
+  end;
+
+  OMX_CONFIG_IMAGEPTRTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    pImage : OMX_PTR;
+  end;
+
+  OMX_CONFIG_AFASSISTTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    eMode : OMX_AFASSISTTYPE;
+  end;
+
+  OMX_CONFIG_INPUTCROPTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    xLeft : OMX_U32;
+    xTop : OMX_U32;
+    xWidth : OMX_U32;
+    xHeight : OMX_U32;
+  end;
+
+  OMX_PARAM_CODECREQUIREMENTSTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nCallbackID : OMX_U32;
+    bTryHWCodec : OMX_BOOL;
+  end;
+
+  OMX_CONFIG_BRCMEGLIMAGEMEMHANDLETYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    eglImage : OMX_PTR;
+    memHandle : OMX_PTR;
+  end;
+
+  OMX_CONFIG_PRIVACYINDICATORTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    ePrivacyIndicatorMode : OMX_PRIVACYINDICATORTYPE;
+  end;
+
+  OMX_PARAM_CAMERAFLASHTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    eFlashType : OMX_CAMERAFLASHTYPE;
+    bRedEyeUsesTorchMode : OMX_BOOL;
+  end;
+
+  OMX_CONFIG_CAMERAFLASHCONFIGTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    bUsePreFlash : OMX_BOOL;
+    bUseFocusDistanceInfo : OMX_BOOL;
+    eFlashSync : OMX_CAMERAFLASHCONFIGSYNCTYPE;
+    bIgnoreChargeState : OMX_BOOL;
+  end;
+
+  OMX_CONFIG_BRCMAUDIOTRACKGAPLESSPLAYBACKTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    nDelay : OMX_U32;
+    nPadding : OMX_U32;
+  end;
+
+  OMX_CONFIG_BRCMAUDIOTRACKCHANGECONTROLTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nSrcPortIndex : OMX_U32;
+    nDstPortIndex : OMX_U32;
+    nXFade : OMX_U32;
+  end;
+
+  OMX_PARAM_BRCMPIXELVALUERANGETYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    ePixelValueRange : OMX_BRCMPIXELVALUERANGETYPE;
+  end;
+
+  OMX_PARAM_CAMERADISABLEALGORITHMTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    eAlgorithm : OMX_CAMERADISABLEALGORITHMTYPE;
+    bDisabled : OMX_BOOL;
+  end;
+
+  OMX_CONFIG_BRCMAUDIOEFFECTCONTROLTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    bEnable : OMX_BOOL;
+    name : array [0 .. 15] of OMX_U8;
+    _property : array [0 .. 255] of OMX_U8;
+  end;
+
+  OMX_CONFIG_BRCMMINIMUMPROCESSINGLATENCY = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nOffset : OMX_TICKS;
+  end;
+
+  OMX_PARAM_BRCMVIDEOAVCSEIENABLETYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    bEnable : OMX_BOOL;
+  end;
+
+  OMX_PARAM_BRCMALLOWMEMCHANGETYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    bEnable : OMX_BOOL;
+  end;
+
+  OMX_CONFIG_CAMERAUSECASETYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    eUseCase : OMX_CONFIG_CAMERAUSECASE;
+  end;
+
+  OMX_PARAM_BRCMDISABLEPROPRIETARYTUNNELSTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    bUseBuffers : OMX_BOOL;
+  end;
+
+  OMX_PARAM_BRCMRETAINMEMORYTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    bEnable : OMX_BOOL;
+  end;
+
+  OMX_PARAM_BRCMOUTPUTBUFFERSIZETYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nBufferSize : OMX_U32;
+  end;
+
+  OMX_CONFIG_LENSCALIBRATIONVALUETYPE = record
+    nShutterDelayTime : OMX_U16;
+    nNdTransparency : OMX_U16;
+    nPwmPulseNearEnd : OMX_U16;
+    nPwmPulseFarEnd : OMX_U16;
+    nVoltagePIOutNearEnd : array [0 .. 2] of OMX_U16;
+    nVoltagePIOut10cm : array [0 .. 2] of OMX_U16;
+    nVoltagePIOutInfinity : array [0 .. 2] of OMX_U16;
+    nVoltagePIOutFarEnd : array [0 .. 2] of OMX_U16;
+    nAdcConversionNearEnd : OMX_U32;
+    nAdcConversionFarEnd : OMX_U32;
+  end;
+
+  OMX_CONFIG_CAMERAINFOTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    cameraname : array [0 .. OMX_CONFIG_CAMERAINFOTYPE_NAME_LEN - 1] of OMX_U8;
+    lensname : array [0 .. OMX_CONFIG_CAMERAINFOTYPE_NAME_LEN - 1] of OMX_U8;
+    nModelId : OMX_U16;
+    nManufacturerId : OMX_U8;
+    nRevNum : OMX_U8;
+    sSerialNumber : array [0 .. OMX_CONFIG_CAMERAINFOTYPE_SERIALNUM_LEN - 1] of OMX_U8;
+    sEpromVersion : array [0 .. OMX_CONFIG_CAMERAINFOTYPE_EPROMVER_LEN - 1] of OMX_U8;
+    sLensCalibration : OMX_CONFIG_LENSCALIBRATIONVALUETYPE;
+    xFNumber : OMX_U32;
+    xFocalLength : OMX_U32;
+  end;
+
+  OMX_CONFIG_CAMERAFEATURESTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    eHasMechanicalShutter : OMX_CONFIG_CAMERAFEATURESSHUTTER;
+    bHasLens : OMX_BOOL;
+  end;
+
+  OMX_CONFIG_REQUESTCALLBACKTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    nIndex : OMX_INDEXTYPE;
+    bEnable : OMX_BOOL;
+  end;
+
+  OMX_FOCUSREGIONXY = record
+    xLeft : OMX_U32;
+    xTop : OMX_U32;
+    xWidth : OMX_U32;
+    xHeight : OMX_U32;
+    nWeight : OMX_U32;
+    nMask : OMX_U32;
+    eType : OMX_FOCUSREGIONTYPE;
+  end;
+
+  OMX_CONFIG_FOCUSREGIONXYTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    nIndex : OMX_U32;
+    nTotalRegions : OMX_U32;
+    nValidRegions : OMX_S32;
+    bLockToFaces : OMX_BOOL;
+    xFaceTolerance : OMX_U32;
+    sRegion : array [0 .. 0] of OMX_FOCUSREGIONXY;
+  end;
+
+  OMX_CONFIG_U8TYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    nU8 : OMX_U8;
+  end;
+  OMX_PARAM_U8TYPE = OMX_CONFIG_U8TYPE;
+
+  OMX_CONFIG_CAMERASETTINGSTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    nExposure : OMX_U32;
+    nAnalogGain : OMX_U32;
+    nDigitalGain : OMX_U32;
+    nLux : OMX_U32;
+    nRedGain : OMX_U32;
+    nBlueGain : OMX_U32;
+    nFocusPosition : OMX_U32;
+  end;
+
+  OMX_YUVCOLOUR = record
+    nY : OMX_U8;
+    nU : OMX_U8;
+    nV : OMX_U8;
+  end;
+
+  OMX_CONFIG_DRAWBOXLINEPARAMS = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    xCornerSize : OMX_U32;
+    nPrimaryFaceLineWidth : OMX_U32;
+    nOtherFaceLineWidth : OMX_U32;
+    nFocusRegionLineWidth : OMX_U32;
+    sPrimaryFaceColour : OMX_YUVCOLOUR;
+    sPrimaryFaceSmileColour : OMX_YUVCOLOUR;
+    sPrimaryFaceBlinkColour : OMX_YUVCOLOUR;
+    sOtherFaceColour : OMX_YUVCOLOUR;
+    sOtherFaceSmileColour : OMX_YUVCOLOUR;
+    sOtherFaceBlinkColour : OMX_YUVCOLOUR;
+    bShowFocusRegionsWhenIdle : OMX_BOOL;
+    sFocusRegionColour : OMX_YUVCOLOUR;
+    bShowAfState : OMX_BOOL;
+    bShowOnlyPrimaryAfState : OMX_BOOL;
+    bCombineNonFaceRegions : OMX_BOOL;
+    sAfLockPrimaryFaceColour : OMX_YUVCOLOUR;
+    sAfLockOtherFaceColour : OMX_YUVCOLOUR;
+    sAfLockFocusRegionColour : OMX_YUVCOLOUR;
+    sAfFailPrimaryFaceColour : OMX_YUVCOLOUR;
+    sAfFailOtherFaceColour : OMX_YUVCOLOUR;
+    sAfFailFocusRegionColour : OMX_YUVCOLOUR;
+  end;
+
+  OMX_PARAM_CAMERARMITYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    bEnabled : OMX_BOOL;
+    sRmiName : array[0..(OMX_PARAM_CAMERARMITYPE_RMINAME_LEN)-1] of OMX_U8;
+    nInputBufferHeight : OMX_U32;
+    nRmiBufferSize : OMX_U32;
+    pImagePool : ^OMX_BRCM_POOL_T;
+  end;
+
+  OMX_CONFIG_BRCMSYNCOUTPUTTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+  end;
+
+  OMX_CONFIG_DRMVIEWTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nCurrentView : OMX_U32;
+    nMaxView : OMX_U32;
+  end;
+
+  OMX_PARAM_BRCMU64TYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    nLowPart : OMX_U32;
+    nHighPart : OMX_U32;
+  end;
+
+  OMX_PARAM_BRCMTHUMBNAILTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    bEnable : OMX_BOOL;
+    bUsePreview : OMX_BOOL;
+    nWidth : OMX_U32;
+    nHeight : OMX_U32;
+  end;
+
+  OMX_PARAM_BRCMASPECTRATIOTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    nWidth : OMX_U32;
+    nHeight : OMX_U32;
+  end;
+
+  OMX_PARAM_BRCMVIDEODECODEERRORCONCEALMENTTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    bStartWithValidFrame : OMX_BOOL;
+  end;
+
+  OMX_CONFIG_FLASHINFOTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    sFlashName : array[0..(OMX_CONFIG_FLASHINFOTYPE_NAME_LEN)-1] of OMX_U8;
+    eFlashType : OMX_CAMERAFLASHTYPE;
+    nDeviceId : OMX_U8;
+    nDeviceVersion : OMX_U8;
+  end;
+
+  OMX_CONFIG_DYNAMICRANGEEXPANSIONTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    eMode : OMX_DYNAMICRANGEEXPANSIONMODETYPE;
+  end;
+
+  OMX_PARAM_BRCMTHREADAFFINITYTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    eAffinity : OMX_BRCMTHREADAFFINITYTYPE;
+  end;
+
+  OMX_CONFIG_SCENEDETECTTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    eScene : OMX_SCENEDETECTTYPE;
+  end;
+
+  OMX_NALSTREAMFORMATTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    eNaluFormat : OMX_NALUFORMATSTYPE;
+  end;
+
+//      OMX_VIDEO_PARAM_AVCTYPE = OMX_VIDEO_PARAM_MVCTYPE;
+
+  OMX_STATICBOX = record
+    xLeft : OMX_U32;
+    xTop : OMX_U32;
+    xWidth : OMX_U32;
+    xHeight : OMX_U32;
+    eType : OMX_STATICBOXTYPE;
+  end;
+
+  OMX_CONFIG_STATICBOXTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    nIndex : OMX_U32;
+    nTotalBoxes : OMX_U32;
+    nValidBoxes : OMX_S32;
+    bDrawOtherBoxes : OMX_BOOL;
+    sBoxes : array [0 .. 0] of OMX_STATICBOX;
+  end;
+
+  OMX_CONFIG_PORTBOOLEANTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    bEnabled : OMX_BOOL;
+  end;
+
+  OMX_PARAM_CAMERACAPTUREMODETYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    eMode : OMX_CAMERACAPTUREMODETYPE;
+  end;
+
+  OMX_PARAM_BRCMDRMENCRYPTIONTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    eEncryption : OMX_BRCMDRMENCRYPTIONTYPE;
+    nConfigDataLen : OMX_U32;
+    configData : array [0 .. 0] of OMX_U8;
+  end;
+
+  OMX_CONFIG_BUFFERSTALLTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    bStalled : OMX_BOOL;
+    nDelay : OMX_U32;
+  end;
+
+  OMX_CONFIG_LATENCYTARGETTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    bEnabled : OMX_BOOL;
+    nFilter : OMX_U32;
+    nTarget : OMX_U32;
+    nShift : OMX_U32;
+    nSpeedFactor : OMX_S32;
+    nInterFactor : OMX_S32;
+    nAdjCap : OMX_S32;
+  end;
+
+  OMX_CONFIG_BRCMUSEPROPRIETARYCALLBACKTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    bEnable : OMX_BOOL;
+  end;
+
+  OMX_PARAM_TIMESTAMPMODETYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    eTimestampMode : OMX_TIMESTAMPMODETYPE;
+  end;
+
+  OMX_BRCMVEGLIMAGETYPE = record
+    nWidth : OMX_U32;
+    nHeight : OMX_U32;
+    nStride : OMX_U32;
+    nUmemHandle : OMX_U32;
+    nUmemOffset : OMX_U32;
+    nFlipped : OMX_U32;
+  end;
+
+  OMX_CONFIG_BRCMFOVTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    xFieldOfViewHorizontal : OMX_U32;
+    xFieldOfViewVertical : OMX_U32;
+  end;
+
+  OMX_VIDEO_CONFIG_LEVEL_EXTEND = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    nCustomMaxMBPS : OMX_U32;
+    nCustomMaxFS : OMX_U32;
+    nCustomMaxBRandCPB : OMX_U32;
+  end;
+
+  OMX_VIDEO_EEDE_ENABLE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    enable : OMX_U32;
+  end;
+
+  OMX_VIDEO_EEDE_LOSSRATE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    loss_rate : OMX_U32;
+  end;
+
+  OMX_PARAM_COLORSPACETYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    eColorSpace : OMX_COLORSPACETYPE;
+  end;
+
+  OMX_PARAM_CAPTURESTATETYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    eCaptureState : OMX_CAPTURESTATETYPE;
+  end;
+
+  OMX_PARAM_BRCMCONFIGFILETYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    fileSize : OMX_U32;
+  end;
+
+  OMX_PARAM_BRCMCONFIGFILECHUNKTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    size : OMX_U32;
+    offset : OMX_U32;
+    data : array [0 .. 0] of OMX_U8;
+  end;
+
+  OMX_PARAM_BRCMFRAMERATERANGETYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    xFramerateLow : OMX_U32;
+    xFramerateHigh : OMX_U32;
+  end;
+
+  OMX_PARAM_S32TYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    nS32 : OMX_S32;
+  end;
+
+  OMX_PARAM_BRCMVIDEODRMPROTECTBUFFERTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    size_wanted : OMX_U32;
+    protect : OMX_U32;
+    mem_handle : OMX_U32;
+    phys_addr : OMX_PTR;
+  end;
+
+  OMX_CONFIG_ZEROSHUTTERLAGTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    bZeroShutterMode : OMX_U32;
+    bConcurrentCapture : OMX_U32;
+  end;
+
+  OMX_PARAM_BRCMVIDEODECODECONFIGVD3TYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    config : array [0 .. 0] of OMX_U8;
+  end;
+
+  OMX_CONFIG_CUSTOMAWBGAINSTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    xGainR : OMX_U32;
+    xGainB : OMX_U32;
+  end;
+
+  OMX_CONFIG_BRCMRENDERSTATSTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    nValid : OMX_BOOL;
+    nMatch : OMX_U32;
+    nPeriod : OMX_U32;
+    nPhase : OMX_U32;
+    nPixelClockNominal : OMX_U32;
+    nPixelClock : OMX_U32;
+    nHvsStatus : OMX_U32;
+    dummy0 : array [0 .. 1] of OMX_U32;
+  end;
+
+  OMX_CONFIG_BRCMANNOTATETYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    bEnable : OMX_BOOL;
+    bShowShutter : OMX_BOOL;
+    bShowAnalogGain : OMX_BOOL;
+    bShowLens : OMX_BOOL;
+    bShowCaf : OMX_BOOL;
+    bShowMotion : OMX_BOOL;
+    bShowFrameNum : OMX_BOOL;
+    bEnableBackground : OMX_BOOL;
+    bCustomBackgroundColour : OMX_BOOL;
+    nBackgroundY : OMX_U8;
+    nBackgroundU : OMX_U8;
+    nBackgroundV : OMX_U8;
+    dummy1 : OMX_U8;
+    bCustomTextColour : OMX_BOOL;
+    nTextY : OMX_U8;
+    nTextU : OMX_U8;
+    nTextV : OMX_U8;
+    nTextSize : OMX_U8;
+    sText : array [0 .. OMX_BRCM_MAXANNOTATETEXTLEN - 1] of OMX_U8;
+  end;
+
+  OMX_CONFIG_BRCMSTEREOSCOPICMODETYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    eMode : OMX_BRCMSTEREOSCOPICMODETYPE;
+    bDecimate : OMX_BOOL;
+    bSwapEyes : OMX_BOOL;
+  end;
+
+  OMX_PARAM_CAMERAINTERFACETYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    eMode : OMX_CAMERAINTERFACETYPE;
+  end;
+
+  OMX_PARAM_CAMERACLOCKINGMODETYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    eMode : OMX_CAMERACLOCKINGMODETYPE;
+  end;
+        (* to fix
+  OMX_PARAM_CAMERARXCONFIG_TYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    eDecode : OMX_CAMERARXDECODETYPE;
+    eEncode : OMX_CAMERARXENCODETYPE;
+    eUnpack : OMX_CAMERARXUNPACKYPE;
+    ePack : OMX_CAMERARXPACKTYPE;
+    nDataLanes : OMX_U32;
+    nEncodeBlockLength : OMX_U32;
+    nEmbeddedDataLines : OMX_U32;
+    nImageId : OMX_U32;
+  end;       *)
+
+  OMX_PARAM_CAMERARXTIMING_TYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    nTiming1 : OMX_U32;
+    nTiming2 : OMX_U32;
+    nTiming3 : OMX_U32;
+    nTiming4 : OMX_U32;
+    nTiming5 : OMX_U32;
+    nTerm1 : OMX_U32;
+    nTerm2 : OMX_U32;
+    nCpiTiming1 : OMX_U32;
+    nCpiTiming2 : OMX_U32;
+  end;
+
+  OMX_PARAM_BAYERORDERTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    eBayerOrder : OMX_BAYERORDERTYPE;
+  end;
+
+  OMX_PARAM_LENSSHADINGOVERRIDETYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    bEnabled : OMX_BOOL;
+    nGridCellSize : OMX_U32;
+    nWidth : OMX_U32;
+    nStride : OMX_U32;
+    nHeight : OMX_U32;
+    nMemHandleTable : OMX_U32;
+    nRefTransform : OMX_U32;
+  end;
+
+  OMX_CCMTYPE = record
+    sCcm : array [0..2, 0 .. 2] of OMX_S32;
+    soffsets : array [0 .. 2] of OMX_S32;
+  end;
+  OMX_PARAM_CCMTYPE = OMX_CCMTYPE;
+
+  OMX_PARAM_CUSTOMCCMTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    bEnabled : OMX_BOOL;
+    xColorMatrix : array [0 .. 2, 0 .. 2] of OMX_S32;
+    nColorOffset : array [0 .. 2] of OMX_S32;
+  end;
+
+// omx functions
 function OMX_Init : OMX_ERRORTYPE; cdecl; external;
 function OMX_Deinit : OMX_ERRORTYPE; cdecl; external;
 function OMX_GetHandle (pHandle : POMX_HANDLETYPE;
                         cComponentName : OMX_STRING;
                         pAppData : OMX_PTR;
                         pCallBacks : POMX_CALLBACKTYPE) : OMX_ERRORTYPE; cdecl; external;
-
 function OMX_ComponentNameEnum (cComponentName : OMX_STRING;
                                 nNameLength : OMX_U32;
                                 nIndex : OMX_U32) : OMX_ERRORTYPE; cdecl; external;
+function OMX_FreeHandle (hComponent : OMX_HANDLETYPE) : OMX_ERRORTYPE; cdecl; external;
+function OMX_SetupTunnel (hOutput : OMX_HANDLETYPE;
+                          nPortOutput : OMX_U32;
+                          hInput : OMX_HANDLETYPE;
+                          nPortInput : OMX_U32) : OMX_ERRORTYPE; cdecl; external;
+function OMX_GetContentPipe (hPipe : POMX_HANDLETYPE;
+                             szURI : OMX_STRING ) : OMX_ERRORTYPE; cdecl; external;
+function OMX_GetComponentsOfRole (role : OMX_STRING;
+                                  pNumComps : POMX_U32;
+                                  compNames : PPOMX_U8) : OMX_ERRORTYPE; cdecl; external;
 function OMX_GetRolesOfComponent (compName : OMX_STRING;
                                   pNumRoles : POMX_U32;
                                   roles : PPOMX_U8) : OMX_ERRORTYPE; cdecl; external;
 
 // macros
 function OMX_GetState (hComponent : OMX_HANDLETYPE; pState : POMX_STATETYPE) : OMX_ERRORTYPE;
-
 function OMX_GetParameter (hComponent : OMX_HANDLETYPE;
                            nParamIndex : OMX_INDEXTYPE;
                            pComponentParameterStructure : OMX_PTR) : OMX_ERRORTYPE;
-
 function OMX_SetParameter (hComponent : OMX_HANDLETYPE;
                            nParamIndex : OMX_INDEXTYPE;
                            pComponentParameterStructure : OMX_PTR) : OMX_ERRORTYPE;
-
 function OMX_EmptyThisBuffer (hComponent : OMX_HANDLETYPE;
-                              pBuffer : POMX_BUFFERHEADERTYPE) : OMX_ERRORTYPE; cdecl;
-
+                              pBuffer : POMX_BUFFERHEADERTYPE) : OMX_ERRORTYPE;
 function OMX_FillThisBuffer (hComponent : OMX_HANDLETYPE;
-                             pBuffer : POMX_BUFFERHEADERTYPE) : OMX_ERRORTYPE; cdecl;
-
+                             pBuffer : POMX_BUFFERHEADERTYPE) : OMX_ERRORTYPE;
 function OMX_SendCommand (hComponent : OMX_HANDLETYPE;
                           Cmd : OMX_COMMANDTYPE;
                           nParam1 : OMX_U32;
                           pCmdData : OMX_PTR) : OMX_ERRORTYPE;
+function OMX_SetConfig (hComponent : OMX_HANDLETYPE;
+                         nIndex : OMX_INDEXTYPE;
+                         pComponentConfigStructure : OMX_PTR) : OMX_ERRORTYPE;
+function OMX_GetExtensionIndex (hComponent : OMX_HANDLETYPE;
+                                cParameterName : OMX_STRING;
+                                pIndexType : POMX_INDEXTYPE) : OMX_ERRORTYPE;
+function OMX_UseBuffer (hComponent : OMX_HANDLETYPE;
+                        ppBufferHdr : PPOMX_BUFFERHEADERTYPE;
+                        nPortIndex : OMX_U32;
+                        pAppPrivate : OMX_PTR;
+                        nSizeBytes : OMX_U32;
+                        pBuffer : POMX_U8) : OMX_ERRORTYPE;
+function OMX_AllocateBuffer (hComponent : OMX_HANDLETYPE;
+                             ppBuffer : PPOMX_BUFFERHEADERTYPE;
+                             nPortIndex : OMX_U32;
+                             pAppPrivate : OMX_PTR;
+                             nSizeBytes : OMX_U32) : OMX_ERRORTYPE;
+function OMX_FreeBuffer (hComponent : OMX_HANDLETYPE;
+                         nPortIndex : OMX_U32;
+                         pBuffer : POMX_BUFFERHEADERTYPE) : OMX_ERRORTYPE;
+function OMX_SetCallbacks (hComponent : OMX_HANDLETYPE;
+                           pCallbacks : POMX_CALLBACKTYPE;
+                           pAppData : OMX_PTR) : OMX_ERRORTYPE;
+function OMX_ComponentDeInit (hComponent : OMX_HANDLETYPE) : OMX_ERRORTYPE;
 
+// helpers
 function OMX_ErrToStr (err : OMX_ERRORTYPE) : string;
 function OMX_StateToStr (s : OMX_STATETYPE) : string;
-
-
 
 implementation
 
@@ -1478,19 +2852,19 @@ function OMX_GetParameter (hComponent : OMX_HANDLETYPE;
                            nParamIndex : OMX_INDEXTYPE;
                            pComponentParameterStructure : OMX_PTR) : OMX_ERRORTYPE;
 begin
-  Result := POMX_COMPONENTTYPE (hCOmponent)^.GetParameter (hComponent, nParamIndex, pComponentParameterStructure);
+  Result := POMX_COMPONENTTYPE (hComponent)^.GetParameter (hComponent, nParamIndex, pComponentParameterStructure);
 end;
 
 function OMX_SetParameter (hComponent : OMX_HANDLETYPE;
                            nParamIndex : OMX_INDEXTYPE;
                            pComponentParameterStructure : OMX_PTR) : OMX_ERRORTYPE;
 begin
-  Result := POMX_COMPONENTTYPE (hCOmponent)^.SetParameter (hComponent, nParamIndex, pComponentParameterStructure);
+  Result := POMX_COMPONENTTYPE (hComponent)^.SetParameter (hComponent, nParamIndex, pComponentParameterStructure);
 end;
 
 function OMX_GetState (hComponent : OMX_HANDLETYPE; pState : POMX_STATETYPE) : OMX_ERRORTYPE;
 begin
-  Result := POMX_COMPONENTTYPE (hCOmponent)^.GetState (hComponent, pState);
+  Result := POMX_COMPONENTTYPE (hComponent)^.GetState (hComponent, pState);
 end;
 
 function OMX_SendCommand (hComponent : OMX_HANDLETYPE;
@@ -1498,20 +2872,88 @@ function OMX_SendCommand (hComponent : OMX_HANDLETYPE;
                           nParam1 : OMX_U32;
                           pCmdData : OMX_PTR) : OMX_ERRORTYPE;
 begin
-  Result := POMX_COMPONENTTYPE (hCOmponent)^.SendCommand (hComponent, Cmd, nParam1, pCmdData);
+  Result := POMX_COMPONENTTYPE (hComponent)^.SendCommand (hComponent, Cmd, nParam1, pCmdData);
 end;
 
 
-function OMX_EmptyThisBuffer (hComponent : OMX_HANDLETYPE;
-                              pBuffer : POMX_BUFFERHEADERTYPE) : OMX_ERRORTYPE; cdecl;
+function OMX_SetConfig (hComponent : OMX_HANDLETYPE;
+                         nIndex : OMX_INDEXTYPE;
+                         pComponentConfigStructure : OMX_PTR) : OMX_ERRORTYPE;
 begin
-  Result := POMX_COMPONENTTYPE (hCOmponent)^.EmptyThisBuffer (hComponent, pBuffer);
+  Result := POMX_COMPONENTTYPE (hComponent)^.SetConfig (hComponent, nIndex, pComponentConfigStructure);
+end;
+
+function OMX_EmptyThisBuffer (hComponent : OMX_HANDLETYPE;
+                              pBuffer : POMX_BUFFERHEADERTYPE) : OMX_ERRORTYPE;
+begin
+  Result := POMX_COMPONENTTYPE (hComponent)^.EmptyThisBuffer (hComponent, pBuffer);
 end;
 
 function OMX_FillThisBuffer (hComponent : OMX_HANDLETYPE;
-                             pBuffer : POMX_BUFFERHEADERTYPE) : OMX_ERRORTYPE; cdecl;
+                             pBuffer : POMX_BUFFERHEADERTYPE) : OMX_ERRORTYPE;
 begin
-  Result := POMX_COMPONENTTYPE (hCOmponent)^.FillThisBuffer (hComponent, pBuffer);
+  Result := POMX_COMPONENTTYPE (hComponent)^.FillThisBuffer (hComponent, pBuffer);
+end;
+
+function OMX_GetExtensionIndex (hComponent : OMX_HANDLETYPE;
+                                cParameterName : OMX_STRING;
+                                pIndexType : POMX_INDEXTYPE) : OMX_ERRORTYPE;
+begin
+  Result := POMX_COMPONENTTYPE (hComponent)^.GetExtensionIndex (hComponent, cParameterName, pIndexType);
+end;
+
+function OMX_UseBuffer (hComponent : OMX_HANDLETYPE;
+                        ppBufferHdr : PPOMX_BUFFERHEADERTYPE;
+                        nPortIndex : OMX_U32;
+                        pAppPrivate : OMX_PTR;
+                        nSizeBytes : OMX_U32;
+                        pBuffer : POMX_U8) : OMX_ERRORTYPE;
+begin
+  Result := POMX_COMPONENTTYPE (hComponent)^.UseBuffer (hComponent, ppBufferHdr, nPortIndex, pAppPrivate, nSizeBytes, pBuffer);
+end;
+
+function OMX_AllocateBuffer (hComponent : OMX_HANDLETYPE;
+                             ppBuffer : PPOMX_BUFFERHEADERTYPE;
+                             nPortIndex : OMX_U32;
+                             pAppPrivate : OMX_PTR;
+                             nSizeBytes : OMX_U32) : OMX_ERRORTYPE;
+begin
+  Result := POMX_COMPONENTTYPE (hComponent)^.AllocateBuffer (hComponent, ppBuffer, nPortIndex, pAppPrivate, nSizeBytes);
+end;
+
+function OMX_FreeBuffer (hComponent : OMX_HANDLETYPE;
+                         nPortIndex : OMX_U32;
+                         pBuffer : POMX_BUFFERHEADERTYPE) : OMX_ERRORTYPE;
+begin
+  Result := POMX_COMPONENTTYPE (hComponent)^.FreeBuffer (hComponent, nPortIndex, pBuffer);
+end;
+
+function OMX_SetCallbacks (hComponent : OMX_HANDLETYPE;
+                           pCallbacks : POMX_CALLBACKTYPE;
+                           pAppData : OMX_PTR) : OMX_ERRORTYPE;
+begin
+  Result := POMX_COMPONENTTYPE (hComponent)^.SetCallbacks (hComponent, pCallbacks, pAppData);
+end;
+
+function OMX_ComponentDeInit (hComponent : OMX_HANDLETYPE) : OMX_ERRORTYPE;
+begin
+  Result := POMX_COMPONENTTYPE (hComponent)^.ComponentDeInit (hComponent);
+end;
+
+function OMX_UseEGLImage (hComponent : OMX_HANDLETYPE;
+                          ppBufferHdr : PPOMX_BUFFERHEADERTYPE;
+                          nPortIndex : OMX_U32;
+                          pAppPrivate : OMX_PTR;
+                          eglImage : Pointer) : OMX_ERRORTYPE;
+begin
+  Result := POMX_COMPONENTTYPE (hComponent)^.UseEGLImage (hComponent,  ppBufferHdr, nPortIndex, pAppPrivate, eglImage);
+end;
+
+function OMX_ComponentRoleEnum (hComponent : OMX_HANDLETYPE;
+                    		        cRole : POMX_U8;
+                                nIndex : OMX_U32) : OMX_ERRORTYPE;
+begin
+  Result := POMX_COMPONENTTYPE (hComponent)^.ComponentRoleEnum (hComponent, cRole, nIndex);
 end;
 
 function OMX_ErrToStr (err : OMX_ERRORTYPE) : string;
@@ -1547,7 +2989,7 @@ begin
     OMX_ErrorUnsupportedIndex              : Result := 'Unsupported Index';
     OMX_ErrorBadPortIndex                  : Result := 'Bad Port Index';
     OMX_ErrorPortUnpopulated               : Result := 'Port Unpopulated';
-    OMX_ErrorComponentSuspended            : Result := 'Comonet suspended';
+    OMX_ErrorComponentSuspended            : Result := 'Component suspended';
     OMX_ErrorDynamicResourcesUnavailable   : Result := 'Dynamic Resources Unavailable';
     OMX_ErrorMbErrorsInFrame               : Result := 'Errors in Frame';
     OMX_ErrorFormatNotDetected             : Result := 'Format not Detected';
