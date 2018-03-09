@@ -62,14 +62,14 @@ insufficient space for the whole message in the fifo, and none of the message is
 sent.
 ******************************************************************************)
 
-(*  send command to general command serivce *)
-function vc_gencmd_send (const _format : PChar) : integer; cdecl; external;
+(* send command to general command serivce *)
+function vc_gencmd_send (const _format : PChar) : integer; cdecl; varargs; external;
 
-(*  get resonse from general command serivce *)
+(* get resonse from general command service *)
 function vc_gencmd_read_response (response : PChar; maxlen : integer) : integer; cdecl; external;
 
 (* convenience function to send command and receive the response *)
-function vc_gencmd (response : PChar; maxlen : integer; const _format : PChar) : integer; cdecl; external;
+function vc_gencmd (response : PChar; maxlen : integer; const _format : PChar) : integer; cdecl; varargs; external;
 
 (* read part of a response from the general command service *)
 function vc_gencmd_read_response_partial (response : PChar; nbytes : integer) : integer; cdecl; external;
