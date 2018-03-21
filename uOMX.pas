@@ -72,6 +72,8 @@ const
   OMX_FALSE                                = LongBool (false);
   OMX_TRUE                                 = LongBool (true);
 
+  OMX_ALL                                  = $FFFFFFFF;
+
   OMX_NumericalDataSigned                  = 0;          (* signed data *)
   OMX_NumericalDataUnsigned                = 1;          (* unsigned data *)
   OMX_NumercialDataMax                     = $7FFFFFFF;
@@ -231,7 +233,6 @@ const
   OMX_IMAGE_CodingTGA                      = $7F000001;
   OMX_IMAGE_CodingPPM                      = $7F000002;
   OMX_IMAGE_CodingMax                      = $7FFFFFFF;
-
 
   OMX_OTHER_FormatTime                     = 0;          (* Transmission of various timestamps, elapsed time,
                                                             time deltas, etc *)
@@ -526,6 +527,66 @@ const
   OMX_TimestampModeVendorStartUnused       = $7F000000;
   OMX_TimestampModeMax                     = $7FFFFFFF;
 
+  OMX_COLOR_FormatUnused                   = 0;
+  OMX_COLOR_FormatMonochrome               = 1;
+  OMX_COLOR_Format8bitRGB332               = 2;
+  OMX_COLOR_Format12bitRGB444              = 3;
+  OMX_COLOR_Format16bitARGB4444            = 4;
+  OMX_COLOR_Format16bitARGB1555            = 5;
+  OMX_COLOR_Format16bitRGB565              = 6;
+  OMX_COLOR_Format16bitBGR565              = 7;
+  OMX_COLOR_Format18bitRGB666              = 8;
+  OMX_COLOR_Format18bitARGB1665            = 9;
+  OMX_COLOR_Format19bitARGB1666            = 10;
+  OMX_COLOR_Format24bitRGB888              = 11;
+  OMX_COLOR_Format24bitBGR888              = 12;
+  OMX_COLOR_Format24bitARGB1887            = 13;
+  OMX_COLOR_Format25bitARGB1888            = 14;
+  OMX_COLOR_Format32bitBGRA8888            = 15;
+  OMX_COLOR_Format32bitARGB8888            = 16;
+  OMX_COLOR_FormatYUV411Planar             = 17;
+  OMX_COLOR_FormatYUV411PackedPlanar       = 18;
+  OMX_COLOR_FormatYUV420Planar             = 19;
+  OMX_COLOR_FormatYUV420PackedPlanar       = 20;
+  OMX_COLOR_FormatYUV420SemiPlanar         = 21;
+  OMX_COLOR_FormatYUV422Planar             = 22;
+  OMX_COLOR_FormatYUV422PackedPlanar       = 23;
+  OMX_COLOR_FormatYUV422SemiPlanar         = 24;
+  OMX_COLOR_FormatYCbYCr                   = 25;
+  OMX_COLOR_FormatYCrYCb                   = 26;
+  OMX_COLOR_FormatCbYCrY                   = 27;
+  OMX_COLOR_FormatCrYCbY                   = 28;
+  OMX_COLOR_FormatYUV444Interleaved        = 29;
+  OMX_COLOR_FormatRawBayer8bit             = 30;
+  OMX_COLOR_FormatRawBayer10bit            = 31;
+  OMX_COLOR_FormatRawBayer8bitcompressed   = 32;
+  OMX_COLOR_FormatL2                       = 33;
+  OMX_COLOR_FormatL4                       = 34;
+  OMX_COLOR_FormatL8                       = 35;
+  OMX_COLOR_FormatL16                      = 36;
+  OMX_COLOR_FormatL24                      = 37;
+  OMX_COLOR_FormatL32                      = 38;
+  OMX_COLOR_FormatYUV420PackedSemiPlanar   = 39;
+  OMX_COLOR_FormatYUV422PackedSemiPlanar   = 40;
+  OMX_COLOR_Format18BitBGR666              = 41;
+  OMX_COLOR_Format24BitARGB6666            = 42;
+  OMX_COLOR_Format24BitABGR6666            = 43;
+  OMX_COLOR_FormatKhronosExtensions        = $6F000000;  (* Reserved region for introducing Khronos Standard Extensions *)
+  OMX_COLOR_FormatVendorStartUnused        = $7F000000;  (* Reserved region for introducing Vendor Extensions *)
+  OMX_COLOR_Format32bitABGR8888            = $7F000001;
+  OMX_COLOR_Format8bitPalette              = $7F000002;
+  OMX_COLOR_FormatYUVUV128                 = $7F000003;
+  OMX_COLOR_FormatRawBayer12bit            = $7F000004;
+  OMX_COLOR_FormatBRCMEGL                  = $7F000005;
+  OMX_COLOR_FormatBRCMOpaque               = $7F000006;
+  OMX_COLOR_FormatYVU420PackedPlanar       = $7F000007;
+  OMX_COLOR_FormatYVU420PackedSemiPlanar   = $7F000008;
+  OMX_COLOR_FormatRawBayer16bit            = $7F000009;
+  OMX_COLOR_FormatYUV420_16PackedPlanar    = $7F00000A;  (* YUV420, 16bit/component *)
+  OMX_COLOR_FormatYUV420_10PackedPlanar    = $7F00000B;  (* YUV420, 10bit/component as least sig 10bits of 16 bit words *)
+  OMX_COLOR_FormatYUVUV64_10               = $7F00000C;  (* YUVUV, 10bit/component as least sig 10bits of 16 bit words *)
+  OMX_COLOR_FormatMax                      = $7FFFFFFF;
+
   OMX_COLORSPACE_UNKNOWN                   = 0;
   OMX_COLORSPACE_JPEG_JFIF                 = 1;
   OMX_COLORSPACE_ITU_R_BT601               = 2;
@@ -804,272 +865,272 @@ const
   OMX_IndexParamTestInterface              = $7F00000F;  (* reference : OMX_PARAM_TESTINTERFACETYPE *)
 
   // 0x7f000010
-  OMX_IndexConfigDisplayRegion             = $7f000010;  (* reference : OMX_CONFIG_DISPLAYREGIONTYPE *)
-  OMX_IndexParamSource                     = $7f000011;  (* reference : OMX_PARAM_SOURCETYPE *)
-  OMX_IndexParamSourceSeed                 = $7f000012;  (* reference : OMX_PARAM_SOURCESEEDTYPE *)
-  OMX_IndexParamResize                     = $7f000013;  (* reference : OMX_PARAM_RESIZETYPE *)
-  OMX_IndexConfigVisualisation             = $7f000014;  (* reference : OMX_CONFIG_VISUALISATIONTYPE *)
-  OMX_IndexConfigSingleStep                = $7f000015;  (* reference : OMX_PARAM_U32TYPE *)
-  OMX_IndexConfigPlayMode                  = $7f000016;  (* reference: OMX_CONFIG_PLAYMODETYPE *)
-  OMX_IndexParamCameraCamplusId            = $7f000017;  (* reference : OMX_PARAM_U32TYPE *)
-  OMX_IndexConfigCommonImageFilterParameters = $7f000018; (* reference : OMX_CONFIG_IMAGEFILTERPARAMSTYPE *)
-  OMX_IndexConfigTransitionControl         = $7f000019;  (* reference : OMX_CONFIG_TRANSITIONCONTROLTYPE *)
-  OMX_IndexConfigPresentationOffset        = $7f00001A;  (* reference: OMX_TIME_CONFIG_TIMESTAMPTYPE *)
-  OMX_IndexParamSourceFunctions            = $7f00001B;  (* reference: OMX_PARAM_STILLSFUNCTIONTYPE *)
-  OMX_IndexConfigAudioMonoTrackControl     = $7f00001C;  (* reference : OMX_CONFIG_AUDIOMONOTRACKCONTROLTYPE *)
-  OMX_IndexParamCameraImagePool            = $7f00001D;  (* reference : OMX_PARAM_CAMERAIMAGEPOOLTYPE *)
-  OMX_IndexConfigCameraISPOutputPoolHeight = $7f00001E;  (* reference : OMX_PARAM_U32TYPE *)
-  OMX_IndexParamImagePoolSize              = $7f00001F;  (* reference: OMX_PARAM_IMAGEPOOLSIZETYPE *)
+  OMX_IndexConfigDisplayRegion             = $7F000010;  (* reference : OMX_CONFIG_DISPLAYREGIONTYPE *)
+  OMX_IndexParamSource                     = $7F000011;  (* reference : OMX_PARAM_SOURCETYPE *)
+  OMX_IndexParamSourceSeed                 = $7F000012;  (* reference : OMX_PARAM_SOURCESEEDTYPE *)
+  OMX_IndexParamResize                     = $7F000013;  (* reference : OMX_PARAM_RESIZETYPE *)
+  OMX_IndexConfigVisualisation             = $7F000014;  (* reference : OMX_CONFIG_VISUALISATIONTYPE *)
+  OMX_IndexConfigSingleStep                = $7F000015;  (* reference : OMX_PARAM_U32TYPE *)
+  OMX_IndexConfigPlayMode                  = $7F000016;  (* reference: OMX_CONFIG_PLAYMODETYPE *)
+  OMX_IndexParamCameraCamplusId            = $7F000017;  (* reference : OMX_PARAM_U32TYPE *)
+  OMX_IndexConfigCommonImageFilterParameters = $7F000018; (* reference : OMX_CONFIG_IMAGEFILTERPARAMSTYPE *)
+  OMX_IndexConfigTransitionControl         = $7F000019;  (* reference : OMX_CONFIG_TRANSITIONCONTROLTYPE *)
+  OMX_IndexConfigPresentationOffset        = $7F00001A;  (* reference: OMX_TIME_CONFIG_TIMESTAMPTYPE *)
+  OMX_IndexParamSourceFunctions            = $7F00001B;  (* reference: OMX_PARAM_STILLSFUNCTIONTYPE *)
+  OMX_IndexConfigAudioMonoTrackControl     = $7F00001C;  (* reference : OMX_CONFIG_AUDIOMONOTRACKCONTROLTYPE *)
+  OMX_IndexParamCameraImagePool            = $7F00001D;  (* reference : OMX_PARAM_CAMERAIMAGEPOOLTYPE *)
+  OMX_IndexConfigCameraISPOutputPoolHeight = $7F00001E;  (* reference : OMX_PARAM_U32TYPE *)
+  OMX_IndexParamImagePoolSize              = $7F00001F;  (* reference: OMX_PARAM_IMAGEPOOLSIZETYPE *)
 
   // 0x7f000020
-  OMX_IndexParamImagePoolExternal          = $7f000020;  (* reference: OMX_PARAM_IMAGEPOOLEXTERNALTYPE *)
-  OMX_IndexParamRUTILFifoInfo              = $7f000021;  (* reference: OMX_PARAM_RUTILFIFOINFOTYPE*)
-  OMX_IndexParamILFifoConfig               = $7f000022;  (* reference: OMX_PARAM_ILFIFOCONFIG *)
-  OMX_IndexConfigCameraSensorModes         = $7f000023;  (* reference : OMX_CONFIG_CAMERASENSORMODETYPE *)
-  OMX_IndexConfigBrcmPortStats             = $7f000024;  (* reference : OMX_CONFIG_BRCMPORTSTATSTYPE *)
-  OMX_IndexConfigBrcmPortBufferStats       = $7f000025;  (* reference : OMX_CONFIG_BRCMPORTBUFFERSTATSTYPE *)
-  OMX_IndexConfigBrcmCameraStats           = $7f000026;  (* reference : OMX_CONFIG_BRCMCAMERASTATSTYPE *)
-  OMX_IndexConfigBrcmIOPerfStats           = $7f000027;  (* reference : OMX_CONFIG_BRCMIOPERFSTATSTYPE *)
-  OMX_IndexConfigCommonSharpness           = $7f000028;  (* reference : OMX_CONFIG_SHARPNESSTYPE *)
-  OMX_IndexConfigCommonFlickerCancellation = $7f000029;  (* reference : OMX_CONFIG_FLICKERCANCELTYPE *)
-  OMX_IndexParamCameraSwapImagePools       = $7f00002A;  (* reference : OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexParamCameraSingleBufferCaptureInput = $7f00002B; (* reference : OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexConfigCommonRedEyeRemoval       = $7f00002C;  (* reference : OMX_CONFIG_REDEYEREMOVALTYPE  *)
-  OMX_IndexConfigCommonFaceDetectionControl = $7f00002D; (* reference : OMX_CONFIG_FACEDETECTIONCONTROLTYPE *)
-  OMX_IndexConfigCommonFaceDetectionRegion = $7f00002E;  (* reference : OMX_CONFIG_FACEDETECTIONREGIONTYPE *)
-  OMX_IndexConfigCommonInterlace           = $7f00002F;  (* reference: OMX_CONFIG_INTERLACETYPE *)
+  OMX_IndexParamImagePoolExternal          = $7F000020;  (* reference: OMX_PARAM_IMAGEPOOLEXTERNALTYPE *)
+  OMX_IndexParamRUTILFifoInfo              = $7F000021;  (* reference: OMX_PARAM_RUTILFIFOINFOTYPE*)
+  OMX_IndexParamILFifoConfig               = $7F000022;  (* reference: OMX_PARAM_ILFIFOCONFIG *)
+  OMX_IndexConfigCameraSensorModes         = $7F000023;  (* reference : OMX_CONFIG_CAMERASENSORMODETYPE *)
+  OMX_IndexConfigBrcmPortStats             = $7F000024;  (* reference : OMX_CONFIG_BRCMPORTSTATSTYPE *)
+  OMX_IndexConfigBrcmPortBufferStats       = $7F000025;  (* reference : OMX_CONFIG_BRCMPORTBUFFERSTATSTYPE *)
+  OMX_IndexConfigBrcmCameraStats           = $7F000026;  (* reference : OMX_CONFIG_BRCMCAMERASTATSTYPE *)
+  OMX_IndexConfigBrcmIOPerfStats           = $7F000027;  (* reference : OMX_CONFIG_BRCMIOPERFSTATSTYPE *)
+  OMX_IndexConfigCommonSharpness           = $7F000028;  (* reference : OMX_CONFIG_SHARPNESSTYPE *)
+  OMX_IndexConfigCommonFlickerCancellation = $7F000029;  (* reference : OMX_CONFIG_FLICKERCANCELTYPE *)
+  OMX_IndexParamCameraSwapImagePools       = $7F00002A;  (* reference : OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexParamCameraSingleBufferCaptureInput = $7F00002B; (* reference : OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexConfigCommonRedEyeRemoval       = $7F00002C;  (* reference : OMX_CONFIG_REDEYEREMOVALTYPE  *)
+  OMX_IndexConfigCommonFaceDetectionControl = $7F00002D; (* reference : OMX_CONFIG_FACEDETECTIONCONTROLTYPE *)
+  OMX_IndexConfigCommonFaceDetectionRegion = $7F00002E;  (* reference : OMX_CONFIG_FACEDETECTIONREGIONTYPE *)
+  OMX_IndexConfigCommonInterlace           = $7F00002F;  (* reference: OMX_CONFIG_INTERLACETYPE *)
 
   // 0x7f000030
-  OMX_IndexParamISPTunerName               = $7f000030;  (* reference: OMX_PARAM_CAMERAISPTUNERTYPE *)
-  OMX_IndexParamCameraDeviceNumber         = $7f000031;  (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexParamCameraDevicesPresent       = $7f000032;  (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexConfigCameraInputFrame          = $7f000033;  (* reference: OMX_CONFIG_IMAGEPTRTYPE *)
-  OMX_IndexConfigStillColourDenoiseEnable  = $7f000034;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexConfigVideoColourDenoiseEnable  = $7f000035;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexConfigAFAssistLight             = $7f000036;  (* reference: OMX_CONFIG_AFASSISTTYPE *)
-  OMX_IndexConfigSmartShakeReductionEnable = $7f000037;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexConfigInputCropPercentages      = $7f000038;  (* reference: OMX_CONFIG_INPUTCROPTYPE *)
-  OMX_IndexConfigStillsAntiShakeEnable     = $7f000039;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexConfigWaitForFocusBeforeCapture = $7f00003A;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexConfigAudioRenderingLatency     = $7f00003B;  (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexConfigDrawBoxAroundFaces        = $7f00003C;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexParamCodecRequirements          = $7f00003D;  (* reference: OMX_PARAM_CODECREQUIREMENTSTYPE *)
-  OMX_IndexConfigBrcmEGLImageMemHandle     = $7f00003E;  (* reference: OMX_CONFIG_BRCMEGLIMAGEMEMHANDLETYPE *)
-  OMX_IndexConfigPrivacyIndicator          = $7f00003F;  (* reference: OMX_CONFIG_PRIVACYINDICATORTYPE *)
+  OMX_IndexParamISPTunerName               = $7F000030;  (* reference: OMX_PARAM_CAMERAISPTUNERTYPE *)
+  OMX_IndexParamCameraDeviceNumber         = $7F000031;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexParamCameraDevicesPresent       = $7F000032;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexConfigCameraInputFrame          = $7F000033;  (* reference: OMX_CONFIG_IMAGEPTRTYPE *)
+  OMX_IndexConfigStillColourDenoiseEnable  = $7F000034;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexConfigVideoColourDenoiseEnable  = $7F000035;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexConfigAFAssistLight             = $7F000036;  (* reference: OMX_CONFIG_AFASSISTTYPE *)
+  OMX_IndexConfigSmartShakeReductionEnable = $7F000037;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexConfigInputCropPercentages      = $7F000038;  (* reference: OMX_CONFIG_INPUTCROPTYPE *)
+  OMX_IndexConfigStillsAntiShakeEnable     = $7F000039;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexConfigWaitForFocusBeforeCapture = $7F00003A;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexConfigAudioRenderingLatency     = $7F00003B;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexConfigDrawBoxAroundFaces        = $7F00003C;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexParamCodecRequirements          = $7F00003D;  (* reference: OMX_PARAM_CODECREQUIREMENTSTYPE *)
+  OMX_IndexConfigBrcmEGLImageMemHandle     = $7F00003E;  (* reference: OMX_CONFIG_BRCMEGLIMAGEMEMHANDLETYPE *)
+  OMX_IndexConfigPrivacyIndicator          = $7F00003F;  (* reference: OMX_CONFIG_PRIVACYINDICATORTYPE *)
 
   // 0x7f000040
-  OMX_IndexParamCameraFlashType            = $7f000040;  (* reference: OMX_PARAM_CAMERAFLASHTYPE *)
-  OMX_IndexConfigCameraEnableStatsPass     = $7f000041;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexConfigCameraFlashConfig         = $7f000042;  (* reference: OMX_CONFIG_CAMERAFLASHCONFIGTYPE *)
-  OMX_IndexConfigCaptureRawImageURI        = $7f000043;  (* reference: OMX_PARAM_CONTENTURITYPE *)
-  OMX_IndexConfigCameraStripeFuncMinLines  = $7f000044;  (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexConfigCameraAlgorithmVersionDeprecated = $7f000045; (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexConfigCameraIsoReferenceValue   = $7f000046;  (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexConfigCameraCaptureAbortsAutoFocus = $7f000047; (*reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexConfigBrcmClockMissCount        = $7f000048;  (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexConfigFlashChargeLevel          = $7f000049;  (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexConfigBrcmVideoEncodedSliceSize = $7f00004A;  (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexConfigBrcmAudioTrackGaplessPlayback = $7f00004B; (* reference: OMX_CONFIG_BRCMAUDIOTRACKGAPLESSPLAYBACKTYPE *)
-  OMX_IndexConfigBrcmAudioTrackChangeControl = $7f00004C; (* reference: OMX_CONFIG_BRCMAUDIOTRACKCHANGECONTROLTYPE *)
-  OMX_IndexParamBrcmPixelAspectRatio       = $7f00004D;  (* reference: OMX_CONFIG_POINTTYPE *)
-  OMX_IndexParamBrcmPixelValueRange        = $7f00004E;  (* reference: OMX_PARAM_BRCMPIXELVALUERANGETYPE *)
-  OMX_IndexParamCameraDisableAlgorithm     = $7f00004F;  (* reference: OMX_PARAM_CAMERADISABLEALGORITHMTYPE *)
+  OMX_IndexParamCameraFlashType            = $7F000040;  (* reference: OMX_PARAM_CAMERAFLASHTYPE *)
+  OMX_IndexConfigCameraEnableStatsPass     = $7F000041;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexConfigCameraFlashConfig         = $7F000042;  (* reference: OMX_CONFIG_CAMERAFLASHCONFIGTYPE *)
+  OMX_IndexConfigCaptureRawImageURI        = $7F000043;  (* reference: OMX_PARAM_CONTENTURITYPE *)
+  OMX_IndexConfigCameraStripeFuncMinLines  = $7F000044;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexConfigCameraAlgorithmVersionDeprecated = $7F000045; (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexConfigCameraIsoReferenceValue   = $7F000046;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexConfigCameraCaptureAbortsAutoFocus = $7F000047; (*reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexConfigBrcmClockMissCount        = $7F000048;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexConfigFlashChargeLevel          = $7F000049;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexConfigBrcmVideoEncodedSliceSize = $7F00004A;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexConfigBrcmAudioTrackGaplessPlayback = $7F00004B; (* reference: OMX_CONFIG_BRCMAUDIOTRACKGAPLESSPLAYBACKTYPE *)
+  OMX_IndexConfigBrcmAudioTrackChangeControl = $7F00004C; (* reference: OMX_CONFIG_BRCMAUDIOTRACKCHANGECONTROLTYPE *)
+  OMX_IndexParamBrcmPixelAspectRatio       = $7F00004D;  (* reference: OMX_CONFIG_POINTTYPE *)
+  OMX_IndexParamBrcmPixelValueRange        = $7F00004E;  (* reference: OMX_PARAM_BRCMPIXELVALUERANGETYPE *)
+  OMX_IndexParamCameraDisableAlgorithm     = $7F00004F;  (* reference: OMX_PARAM_CAMERADISABLEALGORITHMTYPE *)
 
   // 0x7f000050
-  OMX_IndexConfigBrcmVideoIntraPeriodTime  = $7f000050;  (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexConfigBrcmVideoIntraPeriod      = $7f000051;  (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexConfigBrcmAudioEffectControl    = $7f000052;  (* reference: OMX_CONFIG_BRCMAUDIOEFFECTCONTROLTYPE *)
-  OMX_IndexConfigBrcmMinimumProcessingLatency = $7f000053; (* reference: OMX_CONFIG_BRCMMINIMUMPROCESSINGLATENCY *)
-  OMX_IndexParamBrcmVideoAVCSEIEnable      = $7f000054;  (* reference: OMX_PARAM_BRCMVIDEOAVCSEIENABLETYPE *)
-  OMX_IndexParamBrcmAllowMemChange         = $7f000055;  (* reference: OMX_PARAM_BRCMALLOWMEMCHANGETYPE *)
-  OMX_IndexConfigBrcmVideoEncoderMBRowsPerSlice = $7f000056; (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexParamCameraAFAssistDeviceNumber_Deprecated = $7f000057; (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexParamCameraPrivacyIndicatorDeviceNumber_Deprecated = $7f000058; (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexConfigCameraUseCase             = $7f000059;  (* reference: OMX_CONFIG_CAMERAUSECASETYPE *)
-  OMX_IndexParamBrcmDisableProprietaryTunnels = $7f00005A; (* reference: OMX_PARAM_BRCMDISABLEPROPRIETARYTUNNELSTYPE *)
-  OMX_IndexParamBrcmOutputBufferSize       = $7f00005B;  (*  reference: OMX_PARAM_BRCMOUTPUTBUFFERSIZETYPE *)
-  OMX_IndexParamBrcmRetainMemory           = $7f00005C;  (* reference: OMX_PARAM_BRCMRETAINMEMORYTYPE *)
-  OMX_IndexConfigCanFocus_Deprecated       = $7f00005D;  (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexParamBrcmImmutableInput         = $7f00005E;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexParamDynamicParameterFile       = $7f00005F;  (* reference: OMX_PARAM_CONTENTURITYPE *)
+  OMX_IndexConfigBrcmVideoIntraPeriodTime  = $7F000050;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexConfigBrcmVideoIntraPeriod      = $7F000051;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexConfigBrcmAudioEffectControl    = $7F000052;  (* reference: OMX_CONFIG_BRCMAUDIOEFFECTCONTROLTYPE *)
+  OMX_IndexConfigBrcmMinimumProcessingLatency = $7F000053; (* reference: OMX_CONFIG_BRCMMINIMUMPROCESSINGLATENCY *)
+  OMX_IndexParamBrcmVideoAVCSEIEnable      = $7F000054;  (* reference: OMX_PARAM_BRCMVIDEOAVCSEIENABLETYPE *)
+  OMX_IndexParamBrcmAllowMemChange         = $7F000055;  (* reference: OMX_PARAM_BRCMALLOWMEMCHANGETYPE *)
+  OMX_IndexConfigBrcmVideoEncoderMBRowsPerSlice = $7F000056; (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexParamCameraAFAssistDeviceNumber_Deprecated = $7F000057; (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexParamCameraPrivacyIndicatorDeviceNumber_Deprecated = $7F000058; (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexConfigCameraUseCase             = $7F000059;  (* reference: OMX_CONFIG_CAMERAUSECASETYPE *)
+  OMX_IndexParamBrcmDisableProprietaryTunnels = $7F00005A; (* reference: OMX_PARAM_BRCMDISABLEPROPRIETARYTUNNELSTYPE *)
+  OMX_IndexParamBrcmOutputBufferSize       = $7F00005B;  (*  reference: OMX_PARAM_BRCMOUTPUTBUFFERSIZETYPE *)
+  OMX_IndexParamBrcmRetainMemory           = $7F00005C;  (* reference: OMX_PARAM_BRCMRETAINMEMORYTYPE *)
+  OMX_IndexConfigCanFocus_Deprecated       = $7F00005D;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexParamBrcmImmutableInput         = $7F00005E;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexParamDynamicParameterFile       = $7F00005F;  (* reference: OMX_PARAM_CONTENTURITYPE *)
 
   // 0x7f000060
-  OMX_IndexParamUseDynamicParameterFile    = $7f000060;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexConfigCameraInfo                = $7f000061;  (* reference: OMX_CONFIG_CAMERAINFOTYPE *)
-  OMX_IndexConfigCameraFeatures            = $7f000062;  (* reference: OMX_CONFIG_CAMERAFEATURESTYPE *)
-  OMX_IndexConfigRequestCallback           = $7f000063;  (* reference: OMX_CONFIG_REQUESTCALLBACKTYPE *) //Should be added to the spec as part of IL416c
-  OMX_IndexConfigBrcmOutputBufferFullCount = $7f000064;  (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexConfigCommonFocusRegionXY       = $7f000065;  (* reference: OMX_CONFIG_FOCUSREGIONXYTYPE *)
-  OMX_IndexParamBrcmDisableEXIF            = $7f000066;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexConfigUserSettingsId            = $7f000067;  (* reference: OMX_CONFIG_U8TYPE *)
-  OMX_IndexConfigCameraSettings            = $7f000068;  (* reference: OMX_CONFIG_CAMERASETTINGSTYPE *)
-  OMX_IndexConfigDrawBoxLineParams         = $7f000069;  (* reference: OMX_CONFIG_DRAWBOXLINEPARAMS *)
-  OMX_IndexParamCameraRmiControl_Deprecated = $7f00006A; (* reference: OMX_PARAM_CAMERARMITYPE *)
-  OMX_IndexConfigBurstCapture              = $7f00006B;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexParamBrcmEnableIJGTableScaling  = $7f00006C;  (* reference: OMX_PARAM_IJGSCALINGTYPE *)
-  OMX_IndexConfigPowerDown                 = $7f00006D;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexConfigBrcmSyncOutput            = $7f00006E;  (* reference: OMX_CONFIG_BRCMSYNCOUTPUTTYPE *)
-  OMX_IndexParamBrcmFlushCallback          = $7f00006F;  (* reference: OMX_PARAM_BRCMFLUSHCALLBACK *)
-                                               {
+  OMX_IndexParamUseDynamicParameterFile    = $7F000060;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexConfigCameraInfo                = $7F000061;  (* reference: OMX_CONFIG_CAMERAINFOTYPE *)
+  OMX_IndexConfigCameraFeatures            = $7F000062;  (* reference: OMX_CONFIG_CAMERAFEATURESTYPE *)
+  OMX_IndexConfigRequestCallback           = $7F000063;  (* reference: OMX_CONFIG_REQUESTCALLBACKTYPE *) // Should be added to the spec as part of IL416c
+  OMX_IndexConfigBrcmOutputBufferFullCount = $7F000064;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexConfigCommonFocusRegionXY       = $7F000065;  (* reference: OMX_CONFIG_FOCUSREGIONXYTYPE *)
+  OMX_IndexParamBrcmDisableEXIF            = $7F000066;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexConfigUserSettingsId            = $7F000067;  (* reference: OMX_CONFIG_U8TYPE *)
+  OMX_IndexConfigCameraSettings            = $7F000068;  (* reference: OMX_CONFIG_CAMERASETTINGSTYPE *)
+  OMX_IndexConfigDrawBoxLineParams         = $7F000069;  (* reference: OMX_CONFIG_DRAWBOXLINEPARAMS *)
+  OMX_IndexParamCameraRmiControl_Deprecated = $7F00006A; (* reference: OMX_PARAM_CAMERARMITYPE *)
+  OMX_IndexConfigBurstCapture              = $7F00006B;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexParamBrcmEnableIJGTableScaling  = $7F00006C;  (* reference: OMX_PARAM_IJGSCALINGTYPE *)
+  OMX_IndexConfigPowerDown                 = $7F00006D;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexConfigBrcmSyncOutput            = $7F00006E;  (* reference: OMX_CONFIG_BRCMSYNCOUTPUTTYPE *)
+  OMX_IndexParamBrcmFlushCallback          = $7F00006F;  (* reference: OMX_PARAM_BRCMFLUSHCALLBACK *)
+
   // 0x7f000070
-  OMX_IndexConfigBrcmVideoRequestIFrame,     (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexParamBrcmNALSSeparate,            (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexConfigConfirmView,                (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexConfigDrmView,                    (* reference: OMX_CONFIG_DRMVIEWTYPE *)
-  OMX_IndexConfigBrcmVideoIntraRefresh,      (* reference: OMX_VIDEO_PARAM_INTRAREFRESHTYPE *)
-  OMX_IndexParamBrcmMaxFileSize,             (* reference: OMX_PARAM_BRCMU64TYPE *)
-  OMX_IndexParamBrcmCRCEnable,               (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexParamBrcmCRC,                     (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexConfigCameraRmiInUse_Deprecated,             (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexConfigBrcmAudioSource,            (*reference: OMX_CONFIG_BRCMAUDIOSOURCETYPE *)
-  OMX_IndexConfigBrcmAudioDestination,       (* reference: OMX_CONFIG_BRCMAUDIODESTINATIONTYPE *)
-  OMX_IndexParamAudioDdp,                    (* reference: OMX_AUDIO_PARAM_DDPTYPE *)
-  OMX_IndexParamBrcmThumbnail,               (* reference: OMX_PARAM_BRCMTHUMBNAILTYPE *)
-  OMX_IndexParamBrcmDisableLegacyBlocks_Deprecated,     (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexParamBrcmCameraInputAspectRatio,  (* reference: OMX_PARAM_BRCMASPECTRATIOTYPE *)
-  OMX_IndexParamDynamicParameterFileFailFatal,(* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexConfigBrcmVideoRequestIFrame    = $7F000070;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexParamBrcmNALSSeparate           = $7F000071;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexConfigConfirmView               = $7F000072;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexConfigDrmView                   = $7F000073;  (* reference: OMX_CONFIG_DRMVIEWTYPE *)
+  OMX_IndexConfigBrcmVideoIntraRefresh     = $7F000074;  (* reference: OMX_VIDEO_PARAM_INTRAREFRESHTYPE *)
+  OMX_IndexParamBrcmMaxFileSize            = $7F000075;  (* reference: OMX_PARAM_BRCMU64TYPE *)
+  OMX_IndexParamBrcmCRCEnable              = $7F000076;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexParamBrcmCRC                    = $7F000077;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexConfigCameraRmiInUse_Deprecated = $7F000078;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexConfigBrcmAudioSource           = $7F000079;  (* reference: OMX_CONFIG_BRCMAUDIOSOURCETYPE *)
+  OMX_IndexConfigBrcmAudioDestination      = $7F00007A;  (* reference: OMX_CONFIG_BRCMAUDIODESTINATIONTYPE *)
+  OMX_IndexParamAudioDdp                   = $7F00007B;  (* reference: OMX_AUDIO_PARAM_DDPTYPE *)
+  OMX_IndexParamBrcmThumbnail              = $7F00007C;  (* reference: OMX_PARAM_BRCMTHUMBNAILTYPE *)
+  OMX_IndexParamBrcmDisableLegacyBlocks_Deprecated = $7F00007D; (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexParamBrcmCameraInputAspectRatio = $7F00007E;  (* reference: OMX_PARAM_BRCMASPECTRATIOTYPE *)
+  OMX_IndexParamDynamicParameterFileFailFatal = $7F00007F; (* reference: OMX_CONFIG_BOOLEANTYPE *)
 
   // 0x7f000080
-  OMX_IndexParamBrcmVideoDecodeErrorConcealment, (* reference: OMX_PARAM_BRCMVIDEODECODEERRORCONCEALMENTTYPE *)
-  OMX_IndexParamBrcmInterpolateMissingTimestamps, (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexParamBrcmSetCodecPerformanceMonitoring, (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexConfigFlashInfo,                  (* reference: OMX_CONFIG_FLASHINFOTYPE *)
-  OMX_IndexParamBrcmMaxFrameSkips,           (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexConfigDynamicRangeExpansion,      (* reference: OMX_CONFIG_DYNAMICRANGEEXPANSIONTYPE *)
-  OMX_IndexParamBrcmFlushCallbackId,         (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexParamBrcmTransposeBufferCount,    (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexConfigFaceRecognitionControl,     (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexConfigFaceRecognitionSaveFace,    (* reference: OMX_PARAM_BRCMU64TYPE *)
-  OMX_IndexConfigFaceRecognitionDatabaseUri, (* reference: OMX_PARAM_CONTENTURITYPE *)
-  OMX_IndexConfigClockAdjustment,            (* reference: OMX_TIME_CONFIG_TIMESTAMPTYPE *)
-  OMX_IndexParamBrcmThreadAffinity,          (* reference: OMX_PARAM_BRCMTHREADAFFINITYTYPE *)
-  OMX_IndexParamAsynchronousOutput,          (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexConfigAsynchronousFailureURI,     (* reference: OMX_PARAM_CONTENTURITYPE *)
-  OMX_IndexConfigCommonFaceBeautification,   (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexParamBrcmVideoDecodeErrorConcealment = $7F000080; (* reference: OMX_PARAM_BRCMVIDEODECODEERRORCONCEALMENTTYPE *)
+  OMX_IndexParamBrcmInterpolateMissingTimestamps = $7F000081; (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexParamBrcmSetCodecPerformanceMonitoring = $7F000082; (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexConfigFlashInfo                 = $7F000083;  (* reference: OMX_CONFIG_FLASHINFOTYPE *)
+  OMX_IndexParamBrcmMaxFrameSkips          = $7F000084;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexConfigDynamicRangeExpansion     = $7F000085;  (* reference: OMX_CONFIG_DYNAMICRANGEEXPANSIONTYPE *)
+  OMX_IndexParamBrcmFlushCallbackId        = $7F000086;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexParamBrcmTransposeBufferCount   = $7F000087;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexConfigFaceRecognitionControl    = $7F000088;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexConfigFaceRecognitionSaveFace   = $7F000089;  (* reference: OMX_PARAM_BRCMU64TYPE *)
+  OMX_IndexConfigFaceRecognitionDatabaseUri = $7F00008A; (* reference: OMX_PARAM_CONTENTURITYPE *)
+  OMX_IndexConfigClockAdjustment           = $7F00008B;  (* reference: OMX_TIME_CONFIG_TIMESTAMPTYPE *)
+  OMX_IndexParamBrcmThreadAffinity         = $7F00008C;  (* reference: OMX_PARAM_BRCMTHREADAFFINITYTYPE *)
+  OMX_IndexParamAsynchronousOutput         = $7F00008D;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexConfigAsynchronousFailureURI    = $7F00008E;  (* reference: OMX_PARAM_CONTENTURITYPE *)
+  OMX_IndexConfigCommonFaceBeautification  = $7F00008F;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
 
   // 0x7f000090
-  OMX_IndexConfigCommonSceneDetectionControl = $7f000090; (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexConfigCommonSceneDetected       = $7f000091;  (* reference: OMX_CONFIG_SCENEDETECTTYPE *)
-  OMX_IndexParamDisableVllPool             = $7f000092;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexParamVideoMvc                   = $7f000093;  (* reference: OMX_VIDEO_PARAM_MVCTYPE *)
-  OMX_IndexConfigBrcmDrawStaticBox         = $7f000094;  (* reference: OMX_CONFIG_STATICBOXTYPE *)
-  OMX_IndexConfigBrcmClockReferenceSource  = $7f000095;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexParamPassBufferMarks            = $7f000096;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexConfigPortCapturing             = $7f000097;  (* reference: OMX_CONFIG_PORTBOOLEANTYPE *)
-  OMX_IndexConfigBrcmDecoderPassThrough    = $7f000098;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexConfigCommonSceneDetectionControl = $7F000090; (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexConfigCommonSceneDetected       = $7F000091;  (* reference: OMX_CONFIG_SCENEDETECTTYPE *)
+  OMX_IndexParamDisableVllPool             = $7F000092;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexParamVideoMvc                   = $7F000093;  (* reference: OMX_VIDEO_PARAM_MVCTYPE *)
+  OMX_IndexConfigBrcmDrawStaticBox         = $7F000094;  (* reference: OMX_CONFIG_STATICBOXTYPE *)
+  OMX_IndexConfigBrcmClockReferenceSource  = $7F000095;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexParamPassBufferMarks            = $7F000096;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexConfigPortCapturing             = $7F000097;  (* reference: OMX_CONFIG_PORTBOOLEANTYPE *)
+  OMX_IndexConfigBrcmDecoderPassThrough    = $7F000098;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
   OMX_IndexParamBrcmDecoderPassThrough     = OMX_IndexConfigBrcmDecoderPassThrough;  (* deprecated *)
-  OMX_IndexParamBrcmMaxCorruptMBs          = $7f000099;  (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexConfigBrcmGlobalAudioMute       = $7f00009A;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexParamCameraCaptureMode          = $7f00009B;  (* reference: OMX_PARAM_CAMERACAPTUREMODETYPE *)
-  OMX_IndexParamBrcmDrmEncryption          = $7f00009C;  (* reference: OMX_PARAM_BRCMDRMENCRYPTIONTYPE *)
-  OMX_IndexConfigBrcmCameraRnDPreprocess   = $7f00009D;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexConfigBrcmCameraRnDPostprocess  = $7f00009E;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexConfigBrcmAudioTrackChangeCount = $7f00009F;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexParamBrcmMaxCorruptMBs          = $7F000099;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexConfigBrcmGlobalAudioMute       = $7F00009A;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexParamCameraCaptureMode          = $7F00009B;  (* reference: OMX_PARAM_CAMERACAPTUREMODETYPE *)
+  OMX_IndexParamBrcmDrmEncryption          = $7F00009C;  (* reference: OMX_PARAM_BRCMDRMENCRYPTIONTYPE *)
+  OMX_IndexConfigBrcmCameraRnDPreprocess   = $7F00009D;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexConfigBrcmCameraRnDPostprocess  = $7F00009E;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexConfigBrcmAudioTrackChangeCount = $7F00009F;  (* reference: OMX_PARAM_U32TYPE *)
 
   // 0x7f0000a0
-  OMX_IndexParamCommonUseStcTimestamps,      (* reference: OMX_PARAM_TIMESTAMPMODETYPE *)
-  OMX_IndexConfigBufferStall,                (* reference: OMX_CONFIG_BUFFERSTALLTYPE *)
-  OMX_IndexConfigRefreshCodec,               (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexParamCaptureStatus,               (* reference: OMX_PARAM_CAPTURESTATETYPE *)
-  OMX_IndexConfigTimeInvalidStartTime,       (* reference: OMX_TIME_CONFIG_TIMESTAMPTYPE *)
-  OMX_IndexConfigLatencyTarget,              (* reference: OMX_CONFIG_LATENCYTARGETTYPE *)
-  OMX_IndexConfigMinimiseFragmentation,      (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexConfigBrcmUseProprietaryCallback, (* reference: OMX_CONFIG_BRCMUSEPROPRIETARYTUNNELTYPE *)
-  OMX_IndexParamPortMaxFrameSize,            (* reference: OMX_FRAMESIZETYPE *)
-  OMX_IndexParamComponentName,               (* reference: OMX_PARAM_COMPONENTROLETYPE *)
-  OMX_IndexConfigEncLevelExtension,          (* reference: OMX_VIDEO_CONFIG_LEVEL_EXTEND *)
-  OMX_IndexConfigTemporalDenoiseEnable,      (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexParamBrcmLazyImagePoolDestroy,    (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexParamBrcmEEDEEnable,              (* reference: OMX_VIDEO_EEDE_ENABLE *)
-  OMX_IndexParamBrcmEEDELossRate,            (* reference: OMX_VIDEO_EEDE_LOSSRATE *)
-  OMX_IndexParamAudioDts,                    (* reference: OMX_AUDIO_PARAM_DTSTYPE *)
+  OMX_IndexParamCommonUseStcTimestamps     = $7F0000A0;  (* reference: OMX_PARAM_TIMESTAMPMODETYPE *)
+  OMX_IndexConfigBufferStall               = $7F0000A1;  (* reference: OMX_CONFIG_BUFFERSTALLTYPE *)
+  OMX_IndexConfigRefreshCodec              = $7F0000A2;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexParamCaptureStatus              = $7F0000A3;  (* reference: OMX_PARAM_CAPTURESTATETYPE *)
+  OMX_IndexConfigTimeInvalidStartTime      = $7F0000A4;  (* reference: OMX_TIME_CONFIG_TIMESTAMPTYPE *)
+  OMX_IndexConfigLatencyTarget             = $7F0000A5;  (* reference: OMX_CONFIG_LATENCYTARGETTYPE *)
+  OMX_IndexConfigMinimiseFragmentation     = $7F0000A6;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexConfigBrcmUseProprietaryCallback = $7F0000A7; (* reference: OMX_CONFIG_BRCMUSEPROPRIETARYTUNNELTYPE *)
+  OMX_IndexParamPortMaxFrameSize           = $7F0000A8;  (* reference: OMX_FRAMESIZETYPE *)
+  OMX_IndexParamComponentName              = $7F0000A9;  (* reference: OMX_PARAM_COMPONENTROLETYPE *)
+  OMX_IndexConfigEncLevelExtension         = $7F0000AA;  (* reference: OMX_VIDEO_CONFIG_LEVEL_EXTEND *)
+  OMX_IndexConfigTemporalDenoiseEnable     = $7F0000AB;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexParamBrcmLazyImagePoolDestroy   = $7F0000AC;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexParamBrcmEEDEEnable             = $7F0000AD;  (* reference: OMX_VIDEO_EEDE_ENABLE *)
+  OMX_IndexParamBrcmEEDELossRate           = $7F0000AE;  (* reference: OMX_VIDEO_EEDE_LOSSRATE *)
+  OMX_IndexParamAudioDts                   = $7F0000AF;  (* reference: OMX_AUDIO_PARAM_DTSTYPE *)
 
   // 0x7f0000b0
-  OMX_IndexParamNumOutputChannels,           (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexConfigBrcmHighDynamicRange,       (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexConfigBrcmPoolMemAllocSize,       (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexConfigBrcmBufferFlagFilter,       (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexParamBrcmVideoEncodeMinQuant,     (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexParamBrcmVideoEncodeMaxQuant,     (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexParamRateControlModel,            (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexParamBrcmExtraBuffers,            (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexConfigFieldOfView,                (* reference: OMX_CONFIG_BRCMFOVTYPE *)
-  OMX_IndexParamBrcmAlignHoriz,              (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexParamBrcmAlignVert,               (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexParamColorSpace,                  (* reference: OMX_PARAM_COLORSPACETYPE *)
-  OMX_IndexParamBrcmDroppablePFrames,        (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexParamBrcmVideoInitialQuant,       (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexParamBrcmVideoEncodeQpP,          (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexParamBrcmVideoRCSliceDQuant,      (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexParamNumOutputChannels          = $7F0000B0;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexConfigBrcmHighDynamicRange      = $7F0000B1;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexConfigBrcmPoolMemAllocSize      = $7F0000B2;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexConfigBrcmBufferFlagFilter      = $7F0000B3;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexParamBrcmVideoEncodeMinQuant    = $7F0000B4;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexParamBrcmVideoEncodeMaxQuant    = $7F0000B5;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexParamRateControlModel           = $7F0000B6;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexParamBrcmExtraBuffers           = $7F0000B7;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexConfigFieldOfView               = $7F0000B8;  (* reference: OMX_CONFIG_BRCMFOVTYPE *)
+  OMX_IndexParamBrcmAlignHoriz             = $7F0000B9;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexParamBrcmAlignVert              = $7F0000BA;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexParamColorSpace                 = $7F0000BB;  (* reference: OMX_PARAM_COLORSPACETYPE *)
+  OMX_IndexParamBrcmDroppablePFrames       = $7F0000BC;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexParamBrcmVideoInitialQuant      = $7F0000BD;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexParamBrcmVideoEncodeQpP         = $7F0000BE;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexParamBrcmVideoRCSliceDQuant     = $7F0000BF;  (* reference: OMX_PARAM_U32TYPE *)
 
   // 0x7f0000c0
-  OMX_IndexParamBrcmVideoFrameLimitBits,     (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexParamBrcmVideoPeakRate,           (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexConfigBrcmVideoH264DisableCABAC,  (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexConfigBrcmVideoH264LowLatency,    (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexConfigBrcmVideoH264AUDelimiters,  (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexConfigBrcmVideoH264DeblockIDC,    (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexConfigBrcmVideoH264IntraMBMode,   (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexConfigContrastEnhance,            (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexParamCameraCustomSensorConfig,    (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexParamBrcmHeaderOnOpen,            (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexConfigBrcmUseRegisterFile,        (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexConfigBrcmRegisterFileFailFatal,  (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexParamBrcmConfigFileRegisters,     (* reference: OMX_PARAM_BRCMCONFIGFILETYPE *)
-  OMX_IndexParamBrcmConfigFileChunkRegisters,(* reference: OMX_PARAM_BRCMCONFIGFILECHUNKTYPE *)
-  OMX_IndexParamBrcmAttachLog,               (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexParamCameraZeroShutterLag,        (* reference: OMX_CONFIG_ZEROSHUTTERLAGTYPE *)
+  OMX_IndexParamBrcmVideoFrameLimitBits    = $7F0000C0;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexParamBrcmVideoPeakRate          = $7F0000C1;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexConfigBrcmVideoH264DisableCABAC = $7F0000C2;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexConfigBrcmVideoH264LowLatency   = $7F0000C3;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexConfigBrcmVideoH264AUDelimiters = $7F0000C4;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexConfigBrcmVideoH264DeblockIDC   = $7F0000C5;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexConfigBrcmVideoH264IntraMBMode  = $7F0000C6;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexConfigContrastEnhance           = $7F0000C7;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexParamCameraCustomSensorConfig   = $7F0000C8;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexParamBrcmHeaderOnOpen           = $7F0000C9;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexConfigBrcmUseRegisterFile       = $7F0000CA;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexConfigBrcmRegisterFileFailFatal = $7F0000CB;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexParamBrcmConfigFileRegisters    = $7F0000CC;  (* reference: OMX_PARAM_BRCMCONFIGFILETYPE *)
+  OMX_IndexParamBrcmConfigFileChunkRegisters = $7F0000CD; (* reference: OMX_PARAM_BRCMCONFIGFILECHUNKTYPE *)
+  OMX_IndexParamBrcmAttachLog              = $7F0000CE;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexParamCameraZeroShutterLag       = $7F0000CF;  (* reference: OMX_CONFIG_ZEROSHUTTERLAGTYPE *)
 
   // 0x7f0000d0
-  OMX_IndexParamBrcmFpsRange,                (* reference: OMX_PARAM_BRCMFRAMERATERANGETYPE *)
-  OMX_IndexParamCaptureExposureCompensation, (* reference: OMX_PARAM_S32TYPE *)
-  OMX_IndexParamBrcmVideoPrecodeForQP,       (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexParamBrcmVideoTimestampFifo,      (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexParamSWSharpenDisable,            (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexConfigBrcmFlashRequired,          (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexParamBrcmVideoDrmProtectBuffer,   (* reference: OMX_PARAM_BRCMVIDEODRMPROTECTBUFFERTYPE *)
-  OMX_IndexParamSWSaturationDisable,         (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexParamBrcmVideoDecodeConfigVD3,    (* reference: OMX_PARAM_BRCMVIDEODECODECONFIGVD3TYPE *)
-  OMX_IndexConfigBrcmPowerMonitor,           (* reference: OMX_CONFIG_BOOLEANTYPE *)
-  OMX_IndexParamBrcmZeroCopy,                (* reference: OMX_CONFIG_PORTBOOLEANTYPE *)
-  OMX_IndexParamBrcmVideoEGLRenderDiscardMode,   (* reference: OMX_CONFIG_PORTBOOLEANTYPE *)
-  OMX_IndexParamBrcmVideoAVC_VCLHRDEnable,    (* reference: OMX_CONFIG_PORTBOOLEANTYPE*)
-  OMX_IndexParamBrcmVideoAVC_LowDelayHRDEnable, (* reference: OMX_CONFIG_PORTBOOLEANTYPE*)
-  OMX_IndexParamBrcmVideoCroppingDisable,    (* reference: OMX_CONFIG_PORTBOOLEANTYPE*)
-  OMX_IndexParamBrcmVideoAVCInlineHeaderEnable, (* reference: OMX_CONFIG_PORTBOOLEANTYPE*)
+  OMX_IndexParamBrcmFpsRange               = $7F0000D0;  (* reference: OMX_PARAM_BRCMFRAMERATERANGETYPE *)
+  OMX_IndexParamCaptureExposureCompensation = $7F0000D1; (* reference: OMX_PARAM_S32TYPE *)
+  OMX_IndexParamBrcmVideoPrecodeForQP      = $7F0000D2;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexParamBrcmVideoTimestampFifo     = $7F0000D3;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexParamSWSharpenDisable           = $7F0000D4;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexConfigBrcmFlashRequired         = $7F0000D5;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexParamBrcmVideoDrmProtectBuffer  = $7F0000D6;  (* reference: OMX_PARAM_BRCMVIDEODRMPROTECTBUFFERTYPE *)
+  OMX_IndexParamSWSaturationDisable        = $7F0000D7;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexParamBrcmVideoDecodeConfigVD3   = $7F0000D8;  (* reference: OMX_PARAM_BRCMVIDEODECODECONFIGVD3TYPE *)
+  OMX_IndexConfigBrcmPowerMonitor          = $7F0000D9;  (* reference: OMX_CONFIG_BOOLEANTYPE *)
+  OMX_IndexParamBrcmZeroCopy               = $7F0000DA;  (* reference: OMX_CONFIG_PORTBOOLEANTYPE *)
+  OMX_IndexParamBrcmVideoEGLRenderDiscardMode = $7F0000DB; (* reference: OMX_CONFIG_PORTBOOLEANTYPE *)
+  OMX_IndexParamBrcmVideoAVC_VCLHRDEnable  = $7F0000DC;  (* reference: OMX_CONFIG_PORTBOOLEANTYPE*)
+  OMX_IndexParamBrcmVideoAVC_LowDelayHRDEnable = $7F0000DD; (* reference: OMX_CONFIG_PORTBOOLEANTYPE*)
+  OMX_IndexParamBrcmVideoCroppingDisable   = $7F0000DE;  (* reference: OMX_CONFIG_PORTBOOLEANTYPE*)
+  OMX_IndexParamBrcmVideoAVCInlineHeaderEnable = $7F0000DF; (* reference: OMX_CONFIG_PORTBOOLEANTYPE*)
 
   // 0x7f0000f0
-  OMX_IndexConfigBrcmAudioDownmixCoefficients = $7f0000f0; (* reference: OMX_CONFIG_BRCMAUDIODOWNMIXCOEFFICIENTS *)
-  OMX_IndexConfigBrcmAudioDownmixCoefficients8x8,           (* reference: OMX_CONFIG_BRCMAUDIODOWNMIXCOEFFICIENTS8x8 *)
-  OMX_IndexConfigBrcmAudioMaxSample,                        (* reference: OMX_CONFIG_BRCMAUDIOMAXSAMPLE *)
-  OMX_IndexConfigCustomAwbGains,                            (* reference: OMX_CONFIG_CUSTOMAWBGAINSTYPE *)
-  OMX_IndexParamRemoveImagePadding,                         (* reference: OMX_CONFIG_PORTBOOLEANTYPE*)
-  OMX_IndexParamBrcmVideoAVCInlineVectorsEnable,            (* reference: OMX_CONFIG_PORTBOOLEANTYPE *)
-  OMX_IndexConfigBrcmRenderStats,                           (* reference: OMX_CONFIG_BRCMRENDERSTATSTYPE *)
-  OMX_IndexConfigBrcmCameraAnnotate,                        (* reference: OMX_CONFIG_BRCMANNOTATETYPE *)
-  OMX_IndexParamBrcmStereoscopicMode,                       (* reference :OMX_CONFIG_BRCMSTEREOSCOPICMODETYPE *)
-  OMX_IndexParamBrcmLockStepEnable,                         (* reference: OMX_CONFIG_PORTBOOLEANTYPE *)
-  OMX_IndexParamBrcmTimeScale,                              (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexParamCameraInterface,                            (* reference: OMX_PARAM_CAMERAINTERFACETYPE *)
-  OMX_IndexParamCameraClockingMode,                         (* reference: OMX_PARAM_CAMERACLOCKINGMODETYPE *)
-  OMX_IndexParamCameraRxConfig,                             (* reference: OMX_PARAM_CAMERARXCONFIG_TYPE *)
-  OMX_IndexParamCameraRxTiming,                             (* reference: OMX_PARAM_CAMERARXTIMING_TYPE *)
-  OMX_IndexParamDynamicParameterConfig,                     (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexConfigBrcmAudioDownmixCoefficients = $7F0000F0; (* reference: OMX_CONFIG_BRCMAUDIODOWNMIXCOEFFICIENTS *)
+  OMX_IndexConfigBrcmAudioDownmixCoefficients8x8 = $7F0000F1; (* reference: OMX_CONFIG_BRCMAUDIODOWNMIXCOEFFICIENTS8x8 *)
+  OMX_IndexConfigBrcmAudioMaxSample        = $7F0000F2;  (* reference: OMX_CONFIG_BRCMAUDIOMAXSAMPLE *)
+  OMX_IndexConfigCustomAwbGains            = $7F0000F3;  (* reference: OMX_CONFIG_CUSTOMAWBGAINSTYPE *)
+  OMX_IndexParamRemoveImagePadding         = $7F0000F4;  (* reference: OMX_CONFIG_PORTBOOLEANTYPE*)
+  OMX_IndexParamBrcmVideoAVCInlineVectorsEnable = $7F0000F5; (* reference: OMX_CONFIG_PORTBOOLEANTYPE *)
+  OMX_IndexConfigBrcmRenderStats           = $7F0000F6;  (* reference: OMX_CONFIG_BRCMRENDERSTATSTYPE *)
+  OMX_IndexConfigBrcmCameraAnnotate        = $7F0000F7;  (* reference: OMX_CONFIG_BRCMANNOTATETYPE *)
+  OMX_IndexParamBrcmStereoscopicMode       = $7F0000F8;  (* reference :OMX_CONFIG_BRCMSTEREOSCOPICMODETYPE *)
+  OMX_IndexParamBrcmLockStepEnable         = $7F0000F9;  (* reference: OMX_CONFIG_PORTBOOLEANTYPE *)
+  OMX_IndexParamBrcmTimeScale              = $7F0000FA;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexParamCameraInterface            = $7F0000FB;  (* reference: OMX_PARAM_CAMERAINTERFACETYPE *)
+  OMX_IndexParamCameraClockingMode         = $7F0000FC;  (* reference: OMX_PARAM_CAMERACLOCKINGMODETYPE *)
+  OMX_IndexParamCameraRxConfig             = $7F0000FD;  (* reference: OMX_PARAM_CAMERARXCONFIG_TYPE *)
+  OMX_IndexParamCameraRxTiming             = $7F0000FE;  (* reference: OMX_PARAM_CAMERARXTIMING_TYPE *)
+  OMX_IndexParamDynamicParameterConfig     = $7F0000FF;  (* reference: OMX_PARAM_U32TYPE *)
 
   // 0x7f000100
-  OMX_IndexParamBrcmVideoAVCSPSTimingEnable,                (* reference: OMX_CONFIG_PORTBOOLEANTYPE *)
-  OMX_IndexParamBrcmBayerOrder,                             (* reference: OMX_PARAM_BAYERORDERTYPE *)
-  OMX_IndexParamBrcmMaxNumCallbacks,                        (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexParamBrcmJpegRestartInterval,                    (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexParamBrcmSupportsSlices,                         (* reference: OMX_CONFIG_PORTBOOLEANTYPE *)
-  OMX_IndexParamBrcmIspBlockOverride,                       (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexParamBrcmSupportsUnalignedSliceheight,           (* reference: OMX_CONFIG_PORTBOOLEANTYPE *)
-  OMX_IndexParamBrcmLensShadingOverride,                    (* reference: OMX_PARAM_LENSSHADINGOVERRIDETYPE *)
-  OMX_IndexParamBrcmBlackLevel,                             (* reference: OMX_PARAM_U32TYPE *)
-  OMX_IndexParamOutputShift,                                (* reference: OMX_PARAM_S32TYPE *)
-  OMX_IndexParamCcmShift,                                   (* reference: OMX_PARAM_S32TYPE *)
-  OMX_IndexParamCustomCcm,                                  (* reference: OMX_PARAM_CUSTOMCCMTYPE *)
-  OMX_IndexMax = $7FFFFFFF;                }
+  OMX_IndexParamBrcmVideoAVCSPSTimingEnable = $7F000100; (* reference: OMX_CONFIG_PORTBOOLEANTYPE *)
+  OMX_IndexParamBrcmBayerOrder             = $7F000101;  (* reference: OMX_PARAM_BAYERORDERTYPE *)
+  OMX_IndexParamBrcmMaxNumCallbacks        = $7F000102;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexParamBrcmJpegRestartInterval    = $7F000103;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexParamBrcmSupportsSlices         = $7F000104;  (* reference: OMX_CONFIG_PORTBOOLEANTYPE *)
+  OMX_IndexParamBrcmIspBlockOverride       = $7F000105;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexParamBrcmSupportsUnalignedSliceheight = $7F000106; (* reference: OMX_CONFIG_PORTBOOLEANTYPE *)
+  OMX_IndexParamBrcmLensShadingOverride    = $7F000107;  (* reference: OMX_PARAM_LENSSHADINGOVERRIDETYPE *)
+  OMX_IndexParamBrcmBlackLevel             = $7F000108;  (* reference: OMX_PARAM_U32TYPE *)
+  OMX_IndexParamOutputShift                = $7F000109;  (* reference: OMX_PARAM_S32TYPE *)
+  OMX_IndexParamCcmShift                   = $7F00010A;  (* reference: OMX_PARAM_S32TYPE *)
+  OMX_IndexParamCustomCcm                  = $7F00010B;  (* reference: OMX_PARAM_CUSTOMCCMTYPE *)
+  OMX_IndexMax                             = $7FFFFFFF;
 
 type
   OMX_U8                                   = uint8;
@@ -1160,6 +1221,7 @@ type
 
   POMX_VERSIONTYPE                         = ^OMX_VERSIONTYPE;
   POMX_PORT_PARAM_TYPE                     = ^OMX_PORT_PARAM_TYPE;
+  POMX_PARAM_U32TYPE                        = ^OMX_PARAM_U32TYPE;
   POMX_TICKS                               = ^OMX_TICKS;
   POMX_BUFFERHEADERTYPE                    = ^OMX_BUFFERHEADERTYPE;
   PPOMX_BUFFERHEADERTYPE                   = ^POMX_BUFFERHEADERTYPE;
@@ -1178,8 +1240,6 @@ type
   POMX_OTHER_PORTDEFINITIONTYPE            = ^OMX_OTHER_PORTDEFINITIONTYPE;
   POMX_BRCM_POOL_T                         = ^OMX_BRCM_POOL_T;
   P_IL_FIFO_T                              = ^_IL_FIFO_T;
-
-
 
   {$PACKRECORDS C}
 
@@ -1207,6 +1267,13 @@ type
                                                             version easily done in a single word
                                                             size copy/compare operation *)
         )
+  end;
+
+  OMX_PARAM_U32TYPE = record
+    nSize : OMX_U32;                                     (* Size of this structure, in Bytes *)
+    nVersion : OMX_VERSIONTYPE;                          (* OMX specification version information *)
+    nPortIndex : OMX_U32;                                (* port that this structure applies to *)
+    nU32 : OMX_U32;                                      (* U32 value *)
   end;
 
   OMX_PORT_PARAM_TYPE = record
@@ -2108,7 +2175,7 @@ type
   OMX_PARAM_CAMERAISPTUNERTYPE = record
     nSize : OMX_U32;
     nVersion : OMX_VERSIONTYPE;
-    tuner_name : array [0 .. 63] of OMX_U8;
+    tuner_name : array [0 .. 63] of Char; // OMX_U8;
   end;
 
   OMX_CONFIG_IMAGEPTRTYPE = record
@@ -2801,6 +2868,11 @@ function OMX_GetRolesOfComponent (compName : OMX_STRING;
                                   roles : PPOMX_U8) : OMX_ERRORTYPE; cdecl; external;
 
 // macros
+function OMX_GetComponentVersion (hComponent  : OMX_HANDLETYPE;
+                                  pComponentName : OMX_STRING;
+                                  pComponentVersion : POMX_VERSIONTYPE;
+                                  pSpecVersion : POMX_VERSIONTYPE;
+                                  pComponentUUID : POMX_UUIDTYPE) : OMX_ERRORTYPE;
 function OMX_GetState (hComponent : OMX_HANDLETYPE; pState : POMX_STATETYPE) : OMX_ERRORTYPE;
 function OMX_GetParameter (hComponent : OMX_HANDLETYPE;
                            nParamIndex : OMX_INDEXTYPE;
@@ -2842,12 +2914,25 @@ function OMX_SetCallbacks (hComponent : OMX_HANDLETYPE;
 function OMX_ComponentDeInit (hComponent : OMX_HANDLETYPE) : OMX_ERRORTYPE;
 
 // helpers
+function OMX_BoolToStr (b : LongBool) : string;
 function OMX_ErrToStr (err : OMX_ERRORTYPE) : string;
 function OMX_StateToStr (s : OMX_STATETYPE) : string;
+function OMX_EventToStr (e : OMX_EVENTTYPE) : string;
 
 implementation
 
 // macros
+
+function OMX_GetComponentVersion (hComponent  : OMX_HANDLETYPE;
+                                  pComponentName : OMX_STRING;
+                                  pComponentVersion : POMX_VERSIONTYPE;
+                                  pSpecVersion : POMX_VERSIONTYPE;
+                                  pComponentUUID : POMX_UUIDTYPE) : OMX_ERRORTYPE;
+begin
+  Result := POMX_COMPONENTTYPE (hComponent)^.GetComponentVersion (hComponent, pComponentName, pComponentVersion,
+                                pSpecVersion, pComponentUUID);
+end;
+
 function OMX_GetParameter (hComponent : OMX_HANDLETYPE;
                            nParamIndex : OMX_INDEXTYPE;
                            pComponentParameterStructure : OMX_PTR) : OMX_ERRORTYPE;
@@ -2874,7 +2959,6 @@ function OMX_SendCommand (hComponent : OMX_HANDLETYPE;
 begin
   Result := POMX_COMPONENTTYPE (hComponent)^.SendCommand (hComponent, Cmd, nParam1, pCmdData);
 end;
-
 
 function OMX_SetConfig (hComponent : OMX_HANDLETYPE;
                          nIndex : OMX_INDEXTYPE;
@@ -2955,6 +3039,25 @@ function OMX_ComponentRoleEnum (hComponent : OMX_HANDLETYPE;
 begin
   Result := POMX_COMPONENTTYPE (hComponent)^.ComponentRoleEnum (hComponent, cRole, nIndex);
 end;
+
+function OMX_BoolToStr (b : LongBool) : string;
+begin
+  if b then Result := 'TRUE' else Result := 'FALSE';
+end;
+
+function OMX_EventToStr (e : OMX_EVENTTYPE) : string;
+begin
+  case e of
+    OMX_EventCmdComplete         : Result := 'Command Complete';
+    OMX_EventError               : Result := 'Error';
+    OMX_EventMark                : Result := 'Mask';
+    OMX_EventPortSettingsChanged : Result := 'Port Settings Changed';
+    OMX_EventBufferFlag          : Result := 'Buffer Flag';
+    OMX_EventResourcesAcquired   : Result := 'Resources Acquired';
+    else                           Result := 'Unknown Event (' + e.ToString + ')';
+    end;
+end;
+
 
 function OMX_ErrToStr (err : OMX_ERRORTYPE) : string;
 begin
