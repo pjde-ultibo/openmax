@@ -259,6 +259,40 @@ const
   OMX_TIME_ClockStateVendorStartUnused     = $7F000000;  (* Reserved region for introducing Vendor Extensions *)
   OMX_TIME_ClockStateMax                   = $7FFFFFFF;
 
+  OMX_AUDIO_CodingUnused                   = 0;          (* Placeholder value when coding is N/A  *)
+  OMX_AUDIO_CodingAutoDetect               = 1;          (* auto detection of audio format *)
+  OMX_AUDIO_CodingPCM                      = 2;          (* Any variant of PCM coding *)
+  OMX_AUDIO_CodingADPCM                    = 3;          (* Any variant of ADPCM encoded data *)
+  OMX_AUDIO_CodingAMR                      = 4;          (* Any variant of AMR encoded data *)
+  OMX_AUDIO_CodingGSMFR                    = 5;          (* Any variant of GSM fullrate (i.e. GSM610) *)
+  OMX_AUDIO_CodingGSMEFR                   = 6;          (* Any variant of GSM Enhanced Fullrate encoded data*)
+  OMX_AUDIO_CodingGSMHR                    = 7;          (* Any variant of GSM Halfrate encoded data *)
+  OMX_AUDIO_CodingPDCFR                    = 8;          (* Any variant of PDC Fullrate encoded data *)
+  OMX_AUDIO_CodingPDCEFR                   = 9;          (* Any variant of PDC Enhanced Fullrate encoded data *)
+  OMX_AUDIO_CodingPDCHR                    = 10;         (* Any variant of PDC Halfrate encoded data *)
+  OMX_AUDIO_CodingTDMAFR                   = 11;         (* Any variant of TDMA Fullrate encoded data (TIA/EIA-136-420) *)
+  OMX_AUDIO_CodingTDMAEFR                  = 12;         (* Any variant of TDMA Enhanced Fullrate encoded data (TIA/EIA-136-410) *)
+  OMX_AUDIO_CodingQCELP8                   = 13;         (* Any variant of QCELP 8kbps encoded data *)
+  OMX_AUDIO_CodingQCELP13                  = 14;         (* Any variant of QCELP 13kbps encoded data *)
+  OMX_AUDIO_CodingEVRC                     = 15;         (* Any variant of EVRC encoded data *)
+  OMX_AUDIO_CodingSMV                      = 16;         (* Any variant of SMV encoded data *)
+  OMX_AUDIO_CodingG711                     = 17;         (* Any variant of G.711 encoded data *)
+  OMX_AUDIO_CodingG723                     = 18;         (* Any variant of G.723 dot 1 encoded data *)
+  OMX_AUDIO_CodingG726                     = 19;         (* Any variant of G.726 encoded data *)
+  OMX_AUDIO_CodingG729                     = 20;         (* Any variant of G.729 encoded data *)
+  OMX_AUDIO_CodingAAC                      = 21;         (* Any variant of AAC encoded data *)
+  OMX_AUDIO_CodingMP3                      = 22;         (* Any variant of MP3 encoded data *)
+  OMX_AUDIO_CodingSBC                      = 23;         (* Any variant of SBC encoded data *)
+  OMX_AUDIO_CodingVORBIS                   = 24;         (* Any variant of VORBIS encoded data *)
+  OMX_AUDIO_CodingWMA                      = 25;         (* Any variant of WMA encoded data *)
+  OMX_AUDIO_CodingRA                       = 26;         (* Any variant of RA encoded data *)
+  OMX_AUDIO_CodingMIDI                     = 27;         (* Any variant of MIDI encoded data *)
+  OMX_AUDIO_CodingKhronosExtensions        = $6F000000;  (* Reserved region for introducing Khronos Standard Extensions *)
+  OMX_AUDIO_CodingVendorStartUnused        = $7F000000;  (* Reserved region for introducing Vendor Extensions *)
+  OMX_AUDIO_CodingMax                      = $7FFFFFFF;
+
+
+
   OMX_AUDIO_PCMModeLinear                  = 0;          (* Linear PCM encoded data *)
   OMX_AUDIO_PCMModeALaw                    = 1;          (* A law PCM encoded data (G.711) *)
   OMX_AUDIO_PCMModeMULaw                   = 2;          (* Mu law PCM encoded data (G.711)  *)
@@ -1147,6 +1181,7 @@ type
   OMX_BOOL                                 = LongBool;
   OMX_PTR                                  = pointer;
   OMX_STRING                               = PChar;
+  OMX_CHAR                                 = Char;
 
   OMX_HANDLETYPE                           = pointer;
   POMX_HANDLETYPE                          = ^OMX_HANDLETYPE;
@@ -1676,6 +1711,15 @@ type
     pNativeWindow : OMX_NATIVE_WINDOWTYPE;
   end;
 
+  OMX_VIDEO_PARAM_QUANTIZATIONTYPE = record
+    nSize: OMX_U32;
+    nVersion :OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    nQpI : OMX_U32;
+    nQpP : OMX_U32;
+    nQpB : OMX_U32;
+   end;
+
   OMX_VIDEO_PARAM_PORTFORMATTYPE = record
     nSize : OMX_U32;
     nVersion : OMX_VERSIONTYPE;
@@ -1850,13 +1894,13 @@ type
   OMX_CONFIG_BRCMAUDIODESTINATIONTYPE = record
     nSize : OMX_U32;
     nVersion : OMX_VERSIONTYPE;
-    sName : array [0 .. 15] of OMX_U8;
+    sName : array [0 .. 15] of OMX_CHAR;
   end;
 
   OMX_CONFIG_BRCMAUDIOSOURCETYPE = record
     nSize : OMX_U32;
     nVersion : OMX_VERSIONTYPE;
-    sName : array [0 .. 15] of OMX_U8;
+    sName : array [0 .. 15] of OMX_CHAR;
   end;
 
 
@@ -2047,6 +2091,23 @@ type
     eColorFormat : OMX_COLOR_FORMATTYPE;
     nFrameRateMax : OMX_U32;
     nFrameRateMin : OMX_U32;
+  end;
+
+  OMX_FRAMESIZETYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    nWidth : OMX_U32;
+    nHeight : OMX_U32;
+  end;
+
+  OMX_PARAM_SENSORMODETYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    nFrameRate : OMX_U32;
+    bOneShot : OMX_BOOL;
+    sFrameSize : OMX_FRAMESIZETYPE;
   end;
 
   OMX_BRCMBUFFERSTATSTYPE = record
@@ -3073,7 +3134,7 @@ begin
     OMX_ErrorUnderflow                     : Result := 'Underflow';
     OMX_ErrorOverflow                      : Result := 'Overflow';
     OMX_ErrorHardware                      : Result := 'Hardware Error';
-    OMX_ErrorInvalidState                  : Result := 'Invlaid State';
+    OMX_ErrorInvalidState                  : Result := 'Invalid State';
     OMX_ErrorStreamCorrupt                 : Result := 'Corrupt Stream';
     OMX_ErrorPortsNotCompatible            : Result := 'Ports not Compatible';
     OMX_ErrorResourcesLost                 : Result := 'Resources Lost';
