@@ -14,7 +14,7 @@ uses
   GlobalTypes,
   Platform,
   Threads, VC4,
-  SysUtils, Winsock2, uIL_Client, uOMX, SysCalls, mp3,
+  SysUtils, Winsock2, uIL_Client, uOMX, SysCalls,
   Classes, Console, uTFTP, uLog,
   Ultibo
   { Add additional units here };
@@ -302,24 +302,6 @@ begin
   Log ('End of Playback ...');
 end;
 
-procedure m;
-//var
-//  mad_stream_ : mad_stream;
-//  mad_frame_ : mad_frame;
- // mad_synth_: mad_synth;
-begin
- { mad_stream_init (@mad_stream_);
-  mad_synth_init (@mad_synth_);
-  mad_frame_init (@mad_frame_);
-
-   mad_stream_buffer(@mad_stream_,@tempbuf, 2048);
-           mad_frame_decode(@test_mad_frame, @test_mad_stream);
-           mad_synth_frame(@test_mad_synth,@test_mad_frame);      }
- // mad_decoder_run (nil, 0);
-
-
-end;
-
 begin
   Console1 := ConsoleWindowCreate (ConsoleDeviceGetDefault, CONSOLE_POSITION_LEFT, true);
   Console2 := ConsoleWindowCreate (ConsoleDeviceGetDefault, CONSOLE_POSITION_TOPRIGHT, false);
@@ -350,7 +332,6 @@ begin
           '1' : OpenFile ('tada.wav');
           '2' : PlayFile ('local');
           '3' : PlayFile ('hdmi');
-          '5' : m;
           'Q', 'q' : break;
           end;
     end;
