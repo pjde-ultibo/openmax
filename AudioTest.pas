@@ -14,7 +14,7 @@ uses
   GlobalTypes,
   Platform,
   Threads, VC4,
-  SysUtils, Winsock2, uIL_Client, uOMX,
+  SysUtils, Winsock2, uIL_Client, uOMX, SysCalls, mp3,
   Classes, Console, uTFTP, uLog,
   Ultibo
   { Add additional units here };
@@ -32,6 +32,7 @@ var
   SampleRate : LongWord;
   BitsPerSample : Word;
   comps : array of PCOMPONENT_T;
+  eos : boolean;
 
 // General routines
 procedure Log1 (s : string);
@@ -163,29 +164,30 @@ begin
   end;
 end;
 
-procedure port_settings_callback (data : pointer; comp : PCOMPONENT_T); cdecl;
+procedure port_settings_callback (userdata : pointer; comp : PCOMPONENT_T; data : LongWord); cdecl;
 begin
 //
 end;
 
-procedure empty_buffer_callback (data : pointer; comp : PCOMPONENT_T); cdecl;
+procedure empty_buffer_callback (userdata : pointer; comp : PCOMPONENT_T; data : LongWord); cdecl;
 begin
 //
 end;
 
-procedure fill_buffer_callback (data : pointer; comp : PCOMPONENT_T); cdecl;
+procedure fill_buffer_callback (userdata : pointer; comp : PCOMPONENT_T; data : LongWord); cdecl;
 begin
 //
 end;
 
-procedure eos_callback (data : pointer; comp : PCOMPONENT_T); cdecl;
+procedure eos_callback (userdata : pointer; comp : PCOMPONENT_T; data : LongWord); cdecl;
 begin
-  Log ('End Of Stream Detected.');
+  Log (ComponentName (comp) + ' End Of Stream Detected.');
+  eos := true;
 end;
 
-procedure error_callback (data : pointer; comp : PCOMPONENT_T); cdecl;
+procedure error_callback (userdata : pointer; comp : PCOMPONENT_T; data : LongWord); cdecl;
 begin
-  //
+  Log (ComponentName (comp) + ' Error : ' + OMX_ErrToStr (data));
 end;
 
 function read_into_buffer_and_empty (comp : PCOMPONENT_T;
@@ -204,14 +206,14 @@ begin
   Result := OMX_EmptyThisBuffer (ilclient_get_handle (comps[0]), buff);
 end;
 
-procedure OMXCheck (r : OMX_ERRORTYPE);
+procedure OMXCheck (n : string; r : OMX_ERRORTYPE);
 begin
-  if r <> OMX_ErrorNone then raise Exception.Create (OMX_ErrToStr (r));
+  if r <> OMX_ErrorNone then raise Exception.Create (n + ' ' + OMX_ErrToStr (r));
 end;
 
-procedure ILCheck (e : integer);
+procedure ILCheck (n : string; e : integer);
 begin
-  if e <> 0 then raise Exception.Create ('Failed');
+  if e <> 0 then raise Exception.Create (n + ' Failed');
 end;
 
 procedure PlayFile (dn : string);
@@ -228,11 +230,11 @@ begin
   AudioStream.Seek (0, soFromBeginning);
   SetLength (comps, 2);
   client := nil;
+  eos := false;
   for res := low (comps) to high (comps) do comps[res] := nil;
-  comps[1] := nil;
   // initialise OMX and IL client
   try
-    OMXCheck (OMX_Init);
+    OMXCheck ('OMX Init', OMX_Init);
     client := ilclient_init;
     // set callbacks
     ilclient_set_port_settings_callback (client, @port_settings_callback, nil);
@@ -241,21 +243,21 @@ begin
     ilclient_set_eos_callback (client, @eos_callback, nil);
     ilclient_set_error_callback (client, @error_callback, nil);
     // create render
-    ILCheck (ilclient_create_component (client, @comps[0], 'audio_render', ILCLIENT_ENABLE_INPUT_BUFFERS or ILCLIENT_DISABLE_ALL_PORTS));
+    ILCheck ('Create Render', ilclient_create_component (client, @comps[0], 'audio_render', ILCLIENT_ENABLE_INPUT_BUFFERS or ILCLIENT_DISABLE_ALL_PORTS));
     // confirm port is set to pcm
     FillChar (param, sizeof (OMX_PARAM_PORTDEFINITIONTYPE), 0);
     param.nSize := sizeof (OMX_PARAM_PORTDEFINITIONTYPE);
     param.nVersion.nVersion := OMX_VERSION;
     param.nPortIndex := 100; // audio input
-    OMXCheck (OMX_GetParameter (ilclient_get_handle (comps[0]), OMX_IndexParamPortDefinition, @param));
+    OMXCheck ('Get Port', OMX_GetParameter (ilclient_get_handle (comps[0]), OMX_IndexParamPortDefinition, @param));
     param.format.audio.eEncoding := OMX_AUDIO_CodingPCM;
-    OMXCheck (OMX_SetParameter (ilclient_get_handle (comps[0]), OMX_IndexParamPortDefinition, @param));
+    OMXCheck ('Set Port ', OMX_SetParameter (ilclient_get_handle (comps[0]), OMX_IndexParamPortDefinition, @param));
     // set sampling rate, channels and bits per sample
     FillChar (pcm, sizeof (OMX_AUDIO_PARAM_PCMMODETYPE), 0);
     pcm.nSize := sizeof (OMX_AUDIO_PARAM_PCMMODETYPE);
     pcm.nVersion.nVersion := OMX_VERSION;
     pcm.nPortIndex := 100;
-    OMXCheck (OMX_GetParameter (ilclient_get_handle (comps[0]), OMX_IndexParamAudioPcm, @pcm));
+    OMXCheck ('Get PCM',OMX_GetParameter (ilclient_get_handle (comps[0]), OMX_IndexParamAudioPcm, @pcm));
     pcm.nChannels := Channels;
     pcm.nBitPerSample := BitsPerSample;
     pcm.nSamplingRate := SampleRate;
@@ -271,10 +273,10 @@ begin
           pcm.eChannelMapping[0] := OMX_AUDIO_ChannelLF;
         end;
      end;
-    OMXCheck (OMX_SetParameter (ilclient_get_handle (comps[0]), OMX_IndexParamAudioPcm, @pcm));
+    OMXCheck ('Set PCM', OMX_SetParameter (ilclient_get_handle (comps[0]), OMX_IndexParamAudioPcm, @pcm));
     // set to idle and enable buffers
     ilclient_change_component_state (comps[0], OMX_StateIdle);
-    ILCheck (ilclient_enable_port_buffers (comps[0], 100, nil, nil, nil));
+    ILCheck ('Enable Buffers', ilclient_enable_port_buffers (comps[0], 100, nil, nil, nil));
     ilclient_enable_port (comps[0], 100);
     // set to executing
     ilclient_change_component_state (comps[0], OMX_StateExecuting);
@@ -283,20 +285,39 @@ begin
     dest.nVersion.nVersion := OMX_VERSION;
     FillChar (dest.sName, sizeof (dest.sName), 0);
     dest.sName := dn;
-    OMXCheck (OMX_SetConfig (ilclient_get_handle (comps[0]), OMX_IndexConfigBrcmAudioDestination, @dest));
+    OMXCheck ('Set Dest', OMX_SetConfig (ilclient_get_handle (comps[0]), OMX_IndexConfigBrcmAudioDestination, @dest));
     while AudioStream.Position < AudioStream.Size do
       begin
         hdr := ilclient_get_input_buffer (comps[0], 100, 1);
         if hdr <> nil then read_into_buffer_and_empty (comps[0], hdr);
       end;
+    while not eos do sleep (100);
   finally
     ilclient_change_component_state (comps[0], OMX_StateLoaded);
     ilclient_cleanup_components (@comps[0]);
-    ilclient_destroy (Client);
-    Client := nil;
+    ilclient_destroy (client);
+    client := nil;
     OMX_DeInit;
     end;
-  Log ('End of lesson ...');
+  Log ('End of Playback ...');
+end;
+
+procedure m;
+//var
+//  mad_stream_ : mad_stream;
+//  mad_frame_ : mad_frame;
+ // mad_synth_: mad_synth;
+begin
+ { mad_stream_init (@mad_stream_);
+  mad_synth_init (@mad_synth_);
+  mad_frame_init (@mad_frame_);
+
+   mad_stream_buffer(@mad_stream_,@tempbuf, 2048);
+           mad_frame_decode(@test_mad_frame, @test_mad_stream);
+           mad_synth_frame(@test_mad_synth,@test_mad_frame);      }
+ // mad_decoder_run (nil, 0);
+
+
 end;
 
 begin
@@ -329,6 +350,7 @@ begin
           '1' : OpenFile ('tada.wav');
           '2' : PlayFile ('local');
           '3' : PlayFile ('hdmi');
+          '5' : m;
           'Q', 'q' : break;
           end;
     end;
