@@ -1743,6 +1743,15 @@ type
     pNativeWindow : OMX_NATIVE_WINDOWTYPE;
   end;
 
+  OMX_IMAGE_PARAM_PORTFORMATTYPE = record
+    nSize : OMX_U32;
+    nVersion : OMX_VERSIONTYPE;
+    nPortIndex : OMX_U32;
+    nIndex : OMX_U32;
+    eCompressionFormat :OMX_IMAGE_CODINGTYPE;
+    eColorFormat : OMX_COLOR_FORMATTYPE;
+  end;
+
   OMX_TIME_CONFIG_CLOCKSTATETYPE = record
     nSize : OMX_U32;                                     (* size of the structure in bytes *)
     nVersion : OMX_VERSIONTYPE;                          (* OMX specification version information *)
